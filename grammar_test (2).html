@@ -1,0 +1,1823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Grammar Assessment — MSA University</title>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=JetBrains+Mono:wght@400;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root{
+  --navy:#0f172a;--n2:#1e293b;--n3:#283548;
+  --gold:#f59e0b;--g2:#fbbf24;--g3:#fde68a;
+  --green:#10b981;--red:#ef4444;--blue:#3b82f6;--purple:#8b5cf6;
+  --text:#f1f5f9;--muted:#94a3b8;--dim:#475569;
+  --r:12px;--rs:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--text);min-height:100vh;}
+.nav{background:rgba(15,23,42,.96);backdrop-filter:blur(12px);border-bottom:1px solid rgba(245,158,11,.2);padding:0 14px;display:flex;align-items:center;position:sticky;top:0;z-index:100;min-height:54px;gap:0;}
+.brand{font-family:'Merriweather',serif;font-size:11px;font-weight:700;color:var(--gold);padding:8px 0;margin-right:auto;line-height:1.4;}
+.brand span{color:var(--text);font-weight:400;}
+.tab{display:flex;flex-direction:column;align-items:center;padding:8px 11px;font-size:10px;font-weight:600;color:var(--muted);border:none;background:none;cursor:pointer;transition:all .2s;border-bottom:3px solid transparent;gap:1px;}
+.tab:hover{color:var(--text);}
+.tab.on{color:var(--gold);border-bottom-color:var(--gold);background:rgba(245,158,11,.07);}
+.tab svg{width:16px;height:16px;}
+.tbdg{font-size:8px;padding:1px 5px;border-radius:4px;margin-top:1px;}
+.open{background:rgba(16,185,129,.2);color:#a7f3d0;border:1px solid rgba(16,185,129,.3);}
+.closed{background:rgba(239,68,68,.2);color:#fca5a5;border:1px solid rgba(239,68,68,.3);}
+.app{padding:18px 14px;max-width:900px;margin:0 auto;}
+.gc{background:rgba(30,41,59,.7);border:1px solid rgba(255,255,255,.08);border-radius:var(--r);margin-bottom:13px;}
+.gh{padding:13px 17px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.gh h2{font-family:'Merriweather',serif;font-size:14px;}
+.gh p{font-size:11px;color:var(--muted);width:100%;margin-top:2px;}
+.gb{padding:15px 17px;}
+.fg{margin-bottom:11px;}
+.fg label{display:block;font-size:10px;font-weight:700;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;}
+.fg input,.fg select,.fg textarea{width:100%;padding:9px 11px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:var(--rs);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;transition:border .2s;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--gold);}
+.fg select option{background:#1e293b;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border:none;border-radius:var(--rs);font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;}
+.btn.lg{padding:12px 20px;font-size:14px;width:100%;justify-content:center;}
+.bg{background:linear-gradient(135deg,#d97706,#f59e0b);color:#1a0a00;}
+.bg:hover{opacity:.9;}
+.bn{background:rgba(59,130,246,.2);color:#93c5fd;border:1px solid rgba(59,130,246,.3);}
+.bgg{background:linear-gradient(135deg,#059669,#10b981);color:#fff;}
+.br{background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid rgba(239,68,68,.25);}
+.bo{background:rgba(255,255,255,.06);color:var(--muted);border:1px solid rgba(255,255,255,.1);}
+.bo:hover{background:rgba(255,255,255,.12);color:var(--text);}
+.bp{background:rgba(139,92,246,.2);color:#ddd6fe;border:1px solid rgba(139,92,246,.3);}
+.bsm{padding:4px 9px;font-size:10px;}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:13px;}
+.stat-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:var(--rs);padding:13px;text-align:center;}
+.stat-val{font-size:24px;font-weight:700;color:var(--g2);font-family:'JetBrains Mono',monospace;}
+.stat-lbl{font-size:9px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.5px;}
+.rtbl{width:100%;border-collapse:collapse;font-size:11px;}
+.rtbl th{background:rgba(245,158,11,.1);color:var(--g2);padding:7px 9px;text-align:left;border-bottom:1px solid rgba(255,255,255,.1);font-size:9px;text-transform:uppercase;letter-spacing:.5px;}
+.rtbl td{padding:7px 9px;border-bottom:1px solid rgba(255,255,255,.05);}
+.rtbl tr:hover td{background:rgba(255,255,255,.03);}
+.qrow{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:var(--rs);padding:13px 15px;margin-bottom:9px;}
+.qrow.answered{border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.04);}
+.qrow.correct{border-color:rgba(16,185,129,.6);background:rgba(16,185,129,.09);}
+.qrow.wrong{border-color:rgba(239,68,68,.5);background:rgba(239,68,68,.07);}
+.qnum{font-size:9px;font-weight:700;color:var(--gold);margin-bottom:5px;font-family:'JetBrains Mono',monospace;}
+.qtxt{font-size:13px;color:var(--text);line-height:1.8;margin-bottom:7px;}
+.blank-inp{width:160px;padding:5px 9px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.35);border-radius:6px;color:var(--text);font-size:12px;font-family:'JetBrains Mono',monospace;}
+.blank-inp:focus{outline:none;border-color:var(--gold);}
+.timer-bar{position:sticky;top:54px;z-index:90;background:rgba(15,23,42,.97);backdrop-filter:blur(12px);border-bottom:1px solid rgba(245,158,11,.2);padding:7px 14px;display:none;align-items:center;gap:10px;}
+.timer-bar.active{display:flex;}
+.tdisp{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:#4ade80;}
+.tdisp.warn{color:#fbbf24;animation:pulse 1s infinite;}
+.tdisp.danger{color:#ef4444;animation:pulse .5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.6;}}
+.why-box{margin-top:8px;padding:9px 12px;border-radius:var(--rs);font-size:11px;border-left:3px solid;}
+.why-correct{background:rgba(16,185,129,.1);border-color:#10b981;color:#a7f3d0;}
+.why-wrong{background:rgba(239,68,68,.09);border-color:#ef4444;color:#fca5a5;}
+.chw{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:var(--rs);padding:13px;margin-bottom:12px;}
+.chw h3{font-size:10px;font-weight:700;color:var(--muted);margin-bottom:11px;text-transform:uppercase;letter-spacing:.5px;}
+.gate{max-width:420px;margin:60px auto;background:rgba(30,41,59,.9);border:1px solid rgba(255,255,255,.1);border-radius:var(--r);overflow:hidden;}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#059669,#10b981);color:#fff;padding:9px 18px;border-radius:30px;font-size:12px;font-weight:600;z-index:9999;animation:slideUp .3s;pointer-events:none;}
+.toast.err{background:linear-gradient(135deg,#dc2626,#ef4444);}
+@keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(18px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+.toggle{position:relative;width:42px;height:22px;display:inline-block;}
+.toggle input{opacity:0;width:0;height:0;}
+.tslider{position:absolute;cursor:pointer;inset:0;background:rgba(239,68,68,.3);border-radius:22px;transition:.3s;border:1px solid rgba(239,68,68,.4);}
+.tslider:before{position:absolute;content:"";height:16px;width:16px;left:3px;top:2px;background:#fff;border-radius:50%;transition:.3s;}
+.toggle input:checked + .tslider{background:rgba(16,185,129,.4);border-color:rgba(16,185,129,.6);}
+.toggle input:checked + .tslider:before{transform:translateX(20px);}
+.bdg{display:inline-block;padding:2px 7px;border-radius:20px;font-size:9px;font-weight:700;}
+.bdg-m{background:rgba(59,130,246,.2);color:#93c5fd;border:1px solid rgba(59,130,246,.3);}
+.bdg-f{background:rgba(236,72,153,.2);color:#f9a8d4;border:1px solid rgba(236,72,153,.3);}
+.gain-pos{color:#10b981;font-weight:700;}
+.gain-neg{color:#ef4444;font-weight:700;}
+.attend-box{display:flex;gap:8px;align-items:center;margin-bottom:7px;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--rs);}
+.attend-lbl{font-size:11px;font-weight:600;color:var(--gold);min-width:70px;}
+.blackscreen{position:fixed;inset:0;background:#000;z-index:99999;display:none;}
+.blackscreen.show{display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff;font-family:'DM Sans',sans-serif;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;display:flex;align-items:center;justify-content:center;}
+.modal-box{background:var(--n2);border:1px solid rgba(255,255,255,.15);border-radius:var(--r);padding:22px;max-width:520px;width:90%;max-height:85vh;overflow-y:auto;}
+.egrd{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+@media(max-width:600px){.stat-grid{grid-template-columns:1fr 1fr;}.egrd{grid-template-columns:1fr;}.blank-inp{width:120px;}}
+/* ANTI-CHEAT */
+.exam-area{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}
+.blank-inp{-webkit-user-select:text!important;user-select:text!important;}
+/* WATERMARK */
+.wm{position:fixed;pointer-events:none;z-index:8888;font-size:13px;font-weight:700;color:rgba(255,255,255,.07);white-space:nowrap;transform:rotate(-20deg);transition:top 4s ease,left 4s ease;border:1px solid rgba(255,255,255,.04);padding:4px 10px;border-radius:6px;background:rgba(255,255,255,.02);}
+/* CHEAT LOG BADGE */
+.cheat-badge{position:fixed;top:60px;right:14px;background:rgba(239,68,68,.9);color:#fff;border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;z-index:9000;display:none;backdrop-filter:blur(8px);}
+
+/* LANDING PAGE */
+.landing{min-height:calc(100vh - 54px);display:flex;align-items:center;justify-content:center;padding:20px;}
+.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:680px;width:100%;}
+.role-card{background:rgba(30,41,59,.8);border:2px solid rgba(255,255,255,.1);border-radius:16px;padding:36px 28px;text-align:center;cursor:pointer;transition:all .3s;}
+.role-card:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,.4);}
+.role-card.student{border-color:rgba(16,185,129,.3);}
+.role-card.student:hover{border-color:#10b981;background:rgba(16,185,129,.07);}
+.role-card.admin{border-color:rgba(245,158,11,.3);}
+.role-card.admin:hover{border-color:var(--gold);background:rgba(245,158,11,.07);}
+.role-icon{font-size:56px;margin-bottom:16px;}
+.role-title{font-family:'Merriweather',serif;font-size:20px;margin-bottom:8px;}
+.role-desc{font-size:12px;color:var(--muted);line-height:1.6;}
+@media(max-width:520px){.role-grid{grid-template-columns:1fr;}.landing{padding:16px;}}
+
+</style>
+</head>
+<body>
+
+<!-- Black screen on screenshot -->
+<div class="blackscreen" id="blackscreen">
+  <div style="font-size:48px;margin-bottom:16px;">🚫</div>
+  <div style="font-size:18px;font-weight:700;">Screenshot Disabled</div>
+  <div style="font-size:13px;color:#aaa;margin-top:8px;">This action is not permitted during the exam.</div>
+</div>
+<div class="wm" id="watermark" style="display:none;"></div>
+<div class="cheat-badge" id="cheat-badge">⚠️ Tab switches: <span id="cheat-count">0</span></div>
+<div id="modal-root"></div>
+
+<div id="modal-root"></div>
+
+<nav class="nav" id="main-nav">
+  <div class="brand">MSA University<br><span>Grammar Assessment System</span></div>
+  <button class="tab on" id="tab-pre" onclick="goTab('pre')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+    Pre-Test<span class="tbdg closed" id="pre-badge">LOCKED</span>
+  </button>
+  <button class="tab" id="tab-post" onclick="goTab('post')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+    Post-Test<span class="tbdg closed" id="post-badge">LOCKED</span>
+  </button>
+  <button class="tab" id="tab-attend" onclick="goTab('attend')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M15 11l-3 3-1.5-1.5M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+    Attendance
+  </button>
+  <button class="tab" id="tab-results" onclick="goTab('results')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+    Results
+  </button>
+  <button class="tab" id="tab-edit" onclick="goTab('edit')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+    Edit
+  </button>
+</nav>
+
+<div class="timer-bar" id="timer-bar">
+  <span class="tdisp" id="tdisp">30:00</span>
+  <div>
+    <div style="font-size:9px;color:var(--muted);margin-bottom:3px;" id="tlabel">Time Remaining</div>
+    <div style="height:3px;background:rgba(255,255,255,.08);border-radius:2px;width:110px;"><div style="height:100%;background:#10b981;border-radius:2px;transition:width 1s;" id="tprog"></div></div>
+  </div>
+  <span style="margin-left:auto;font-size:10px;color:var(--muted);" id="tname"></span>
+</div>
+
+<div id="app" class="app"></div>
+
+<script>
+// ══════════════════════════════════════════════
+// CONSTANTS
+// ══════════════════════════════════════════════
+var ADMIN_IDS=["238055"];
+var FACULTIES=["Faculty of Languages","Faculty of Dentistry","Faculty of Pharmacy","Faculty of Physical Therapy","Faculty of Biotechnology","Faculty of Nutrition and Food Technology","Faculty of Engineering","Faculty of Computer Science","Faculty of Arts and Design","Faculty of Mass Communication","Faculty of Management Sciences"];
+
+// ══════════════════════════════════════════════
+// QUESTIONS — Hint-free (no tense labels shown to students)
+// ══════════════════════════════════════════════
+var QS=[
+  {q:"Ahmed always __________ (play) football with his friends on Fridays.",ans:["plays"],tense:"Simple Present",why:"We use Simple Present for habitual actions. With he/she/it, add -s: play → plays."},
+  {q:"The boy __________ (eat) a big apple right now.",ans:["is eating"],tense:"Present Continuous",why:"'Right now' signals an action in progress. Use is/am/are + verb-ing: is eating."},
+  {q:"They __________ (watch) a great movie on TV last night.",ans:["watched"],tense:"Simple Past",why:"'Last night' signals a completed past action. Regular verbs add -ed: watch → watched."},
+  {q:"I __________ (already/eat) my lunch, so I am not hungry now.",ans:["have already eaten","have eaten"],tense:"Present Perfect",why:"'Already' with a present result signals Present Perfect: have + past participle (eaten)."},
+  {q:"While I __________ (study), my phone suddenly rang.",ans:["was studying"],tense:"Past Continuous",why:"'While' + an interrupted action = Past Continuous: was/were + verb-ing."},
+  {q:"She __________ (not/go) to the party last Friday because she was tired.",ans:["didn't go","did not go"],tense:"Simple Past Negative",why:"Negative Simple Past uses did + not + base verb. Never add -ed after didn't."},
+  {q:"I __________ (finish) the book that I __________ (buy) last week.",ans:["finished","had bought"],tense:"Past Perfect",why:"The buying happened before the finishing. Earlier action = Past Perfect (had bought); main action = Simple Past (finished)."},
+  {q:"The sun __________ (rise) in the east every morning.",ans:["rises"],tense:"Simple Present",why:"Scientific facts and universal truths use Simple Present. The sun (3rd person) → rises."},
+  {q:"I __________ (wait) for the bus when it started to rain.",ans:["was waiting"],tense:"Past Continuous",why:"Ongoing background action interrupted by a sudden event = Past Continuous: was waiting."},
+  {q:"We __________ (live) in this apartment for three years.",ans:["have lived","have been living"],tense:"Present Perfect",why:"'For three years' + still living there = Present Perfect. We → have lived / have been living."},
+  {q:"I can't talk to you now because I __________ (do) my homework at the moment.",ans:["am doing"],tense:"Present Continuous",why:"'At the moment' = right now = Present Continuous: am doing."},
+  {q:"He __________ (buy) this new laptop last week.",ans:["bought"],tense:"Simple Past",why:"'Last week' = completed past. Buy is irregular: buy → bought."},
+  {q:"I realized I __________ (forget) my keys after I closed the door.",ans:["had forgotten"],tense:"Past Perfect",why:"Forgetting happened BEFORE realizing. Earlier action = Past Perfect: had forgotten."},
+  {q:"After the guests __________ (leave), I went to sleep.",ans:["had left"],tense:"Past Perfect",why:"'After' shows leaving happened first. Earlier past = Past Perfect: had left."},
+  {q:"At 10 p.m. last night, I __________ (read) a very interesting book.",ans:["was reading"],tense:"Past Continuous",why:"'At 10 p.m. last night' = specific past moment; action was in progress = was reading."},
+  {q:"We __________ (play) tennis when it started to rain heavily.",ans:["were playing"],tense:"Past Continuous",why:"Playing was ongoing (were playing) when the rain interrupted it (Simple Past)."},
+  {q:"The power __________ (go) out while they __________ (cook) dinner.",ans:["went out","were cooking"],tense:"Mixed",why:"Power going out = sudden event (Simple Past: went out). Cooking = ongoing background (Past Continuous: were cooking)."},
+  {q:"After he __________ (finish) his homework, he went out to play.",ans:["had finished"],tense:"Past Perfect",why:"Finishing happened BEFORE going out. Earlier completed action = Past Perfect: had finished."},
+  {q:"The room was very cold because someone __________ (leave) the window open.",ans:["had left"],tense:"Past Perfect",why:"The window was left open BEFORE the room became cold. Earlier cause = Past Perfect: had left."},
+  {q:"They __________ (travel) to France two years ago.",ans:["traveled","travelled"],tense:"Simple Past",why:"'Two years ago' = specific completed past time = Simple Past: traveled."}
+];
+
+// ══════════════════════════════════════════════
+// PRE-LOADED PRE-TEST DATA (from PDF)
+// ══════════════════════════════════════════════
+var SEED_PRE=[
+  {name:"Abdelrahman Ayman",sid:"228051",score:18,gender:"M",faculty:"Faculty of Languages",answers:["plays","eating","watched","am already ate","study","didn't","finishd/buy","risse","was waiting","were live","am doing","bought","had forgon","had left","was reading","were playing","/cooking","had finished","had left","traveled"],at:"2026-01-15T09:00:00.000Z"},
+  {name:"Ammar Medhat",sid:"228072",score:17,gender:"M",faculty:"Faculty of Languages",answers:["plays","eating","watched","had already eaten","was studying","didn't go","finished/bought","rises","was waiting","have lived","doing","bought","had forgotten","had leave","was reading","are playing","goes/cooking","had finished","had leaf","traveled"],at:"2026-01-15T09:02:00.000Z"},
+  {name:"Nourhan Ali",sid:"225011",score:16,gender:"F",faculty:"Faculty of Languages",answers:["plays","eating","watched","already eat","was studying","didn't go","finished/bought","rises","am waiting","had lived","doing","bought","forgotten","leaved","reading","were playing","gone/cooking","finished","leaved","traveled"],at:"2026-01-15T09:04:00.000Z"},
+  {name:"Alaa Elsaid",sid:"228055",score:15,gender:"M",faculty:"Faculty of Languages",answers:["plays","eating","watched","I already ate","was studying","didn't go","finished/buy","rises","was waiting","were live","am doing","bought","I forgot","had left","was reading","were play","went/cooking","had finished","had left","travel"],at:"2026-01-15T09:06:00.000Z"},
+  {name:"Lila Mahmoud",sid:"228044",score:15,gender:"F",faculty:"Faculty of Languages",answers:["plays","eating","watched","already eaten","was study","didn't go","finished/bought","rises","was waiting","have lived","am doing","bought","had forgotten","had left","was reading","were playing","went/cooking","finished","had left","traveled"],at:"2026-01-15T09:08:00.000Z"},
+  {name:"Jana Wael",sid:"229033",score:14,gender:"F",faculty:"Faculty of Languages",answers:["plays","eating","watched","have already eaten","was studying","didn't go","finished/buy","rises","was waiting","have lived","am doing","bought","forgot","had left","was reading","were playing","goes/cooking","had finished","had left","traveled"],at:"2026-01-15T09:10:00.000Z"},
+  {name:"Moustafa Ibrahim",sid:"221054",score:13,gender:"M",faculty:"Faculty of Engineering",answers:["plays","is eating","watched","had already eaten","was studying","didn't go","finished/bought","rises","were waiting","had lived","am doing","bought","forgot","had left","was reading","played","went/cooking","finished","left","traveled"],at:"2026-01-15T09:12:00.000Z"},
+  {name:"Mariam Adel",sid:"228062",score:12,gender:"F",faculty:"Faculty of Computer Science",answers:["plays","is eating","watched","have already eaten","were study","didn't go","finished/bought","rises","am waiting","have lived","am doing","bought","forgotten","had left","reading","played","goes/cooked","finished","left","traveled"],at:"2026-01-15T09:14:00.000Z"},
+  {name:"Tasneem Ahmed",sid:"228060",score:11,gender:"F",faculty:"Faculty of Pharmacy",answers:["plays","eating","watched","already eat","was studying","did not","finished/bought","rises","am waiting","had lived","doing","bought","forgotten","leaved","reading","were playing","gone/cooking","finished","leaved","traveled"],at:"2026-01-15T09:16:00.000Z"},
+  {name:"Salma Mohamed",sid:"228064",score:11,gender:"F",faculty:"Faculty of Mass Communication",answers:["playing","eating","watched","already eating","was study","did not went","finished/bought","rise","was wait","lives","did","bought","forgot","leaves","was reads","playing","went/cooking","finishes","leave","traveling"],at:"2026-01-15T09:18:00.000Z"},
+  {name:"Omar Hassan",sid:"222077",score:11,gender:"M",faculty:"Faculty of Management Sciences",answers:["plays","eating","watched","already eat","study","didn't","finished/bought","risse","waiting","lived","am doing","bought","forgot","leaved","readen","playing","goes/cooking","finish","leave","traveled"],at:"2026-01-15T09:20:00.000Z"},
+  {name:"Hana Mohammed",sid:"228059",score:10,gender:"F",faculty:"Faculty of Dentistry",answers:["plays","was eating","are watched","already eat","was studying","did not go","finished","rises","was waiting","have lives","am doing","bought","had forgotten","left","was reading","were playing","went/cooking","finished","had","traveled"],at:"2026-01-15T09:22:00.000Z"},
+  {name:"Youssef Ahmed",sid:"221099",score:9,gender:"M",faculty:"Faculty of Languages",answers:["plays","eating","watched","already ate","study","didn't","finishd/buy","risse","was waiting","were live","am doing","bought","had forgotten","had left","was reading","were playing","went/cooking","had finished","had left","traveled"],at:"2026-01-15T09:24:00.000Z"},
+  {name:"Ziad Kareem",sid:"224088",score:7,gender:"M",faculty:"Faculty of Arts and Design",answers:["plays","eating","watched","ate","study","didn't","finishd","risse","waiting","lived","doing","bought","forgot","leaved","read","playing","goes/cooking","finish","leave","traveled"],at:"2026-01-15T09:26:00.000Z"},
+  {name:"Rawia Khaled",sid:"228063",score:6,gender:"F",faculty:"Faculty of Physical Therapy",answers:["plays","eat s","watched","already eat","study","didn't go","finished","rises","were wait","was live","doing","bought","forgot","leaved","read","played","went/cooking","finish","leaved","travels"],at:"2026-01-15T09:28:00.000Z"},
+  {name:"Hisham Hamdi",sid:"228061",score:5,gender:"M",faculty:"Faculty of Biotechnology",answers:["plays","eating","watched","eating","studying","didn't","finished/bought","rises","waiting","lived","doing","bought","forgot","leaving","readen","playing","goes/cooking","finish","leave","traveled"],at:"2026-01-15T09:30:00.000Z"},
+  {name:"Khaled Ahmed",sid:"228058",score:4,gender:"M",faculty:"Faculty of Nutrition and Food Technology",answers:["has playing","eating","watched","already eat","am studing","not","finished/buy","it rise","am waiting","have been living","am doing","bought","forgot","leaved","had read","had played","going/cooking","had finished","leaved","traveled"],at:"2026-01-15T09:32:00.000Z"}
+];
+
+// ══════════════════════════════════════════════
+// STORAGE
+// ══════════════════════════════════════════════
+function gLS(k){try{return JSON.parse(localStorage.getItem(k)||"null");}catch(e){return null;}}
+function sLS(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+
+function getAccess(){return gLS("gm_access")||{pre:false,post:false};}
+function setAccess(a){sLS("gm_access",a);}
+function getPreSubs(){
+  var d=gLS("gm_pre");
+  if(!d){d=SEED_PRE;sLS("gm_pre",d);}
+  return d;
+}
+function savePreSubs(a){
+  sLS("gm_pre",a);
+  pushHistory("pre",a);
+}
+function getPostSubs(){return gLS("gm_post")||[];}
+function savePostSubs(a){
+  sLS("gm_post",a);
+  pushHistory("post",a);
+}
+function getAttendance(){return gLS("gm_attend")||{sessions:[],records:{}};}
+function saveAttendance(a){sLS("gm_attend",a);}
+function getExamConfig(){
+  return gLS("gm_config")||{
+    type:"grammar",
+    title:"Grammar Test",
+    description:"Verb Tenses Assessment",
+    mins:30,
+    showTimeTaken:true
+  };
+}
+function saveExamConfig(c){sLS("gm_config",c);}
+
+function getCustomQS(){
+  var d=gLS("gm_qs");
+  return d&&d.length?d:null;
+}
+function saveCustomQS(qs){
+  sLS("gm_qs",qs);
+  // Push to question edit history
+  var h=gLS("gm_hist_qs")||[];
+  h.unshift({ts:Date.now(),data:JSON.parse(JSON.stringify(qs))});
+  if(h.length>20)h=h.slice(0,20);
+  sLS("gm_hist_qs",h);
+}
+function getActiveQS(){
+  return getCustomQS()||QS;
+}
+function rescoreAllSubs(){
+  // Re-score all pre and post subs with current QS
+  var qs=getActiveQS();
+  ["gm_pre","gm_post"].forEach(function(key){
+    var subs=gLS(key)||[];
+    var changed=false;
+    subs.forEach(function(sub){
+      if(!sub.answers||!sub.answers.length)return;
+      var result=scoreAnswersCustom(sub.answers,qs);
+      sub.score=result.score;
+      sub.details=result.details;
+      changed=true;
+    });
+    if(changed)sLS(key,subs);
+  });
+  toast("✅ All scores recalculated with new answers");
+}
+function scoreAnswersCustom(answers,qs){
+  var score=0;var details=[];
+  qs.forEach(function(q,i){
+    var raw=(answers[i]||"").toLowerCase().trim();
+    var correct=q.ans.length===1
+      ?q.ans.some(function(a){return a.toLowerCase()===raw;})
+      :q.ans.every(function(a,ai){return a.toLowerCase()===(raw.split(",").map(function(p){return p.trim();})[ai]||"");});
+    if(correct)score++;
+    details.push({q:q.q,student:answers[i]||"",correct:correct,why:q.why||"",tense:q.tense||"",expected:q.ans.join(" / ")});
+  });
+  return{score:score,details:details};
+}
+
+// Version history (20 snapshots)
+function pushHistory(key,data){
+  var h=gLS("gm_hist_"+key)||[];
+  h.unshift({ts:Date.now(),data:JSON.parse(JSON.stringify(data))});
+  if(h.length>20)h=h.slice(0,20);
+  sLS("gm_hist_"+key,h);
+}
+function getHistory(key){return gLS("gm_hist_"+key)||[];}
+
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+var S={
+  role:null,        // null=landing, "student", "admin"
+  view:"pre",phase:"cover",testType:"pre",
+  adminOK:false,
+  student:null,answers:{},
+  tInt:null,tLeft:1800,tTotal:1800,
+  lastResult:null,
+  viewAttempt:null,
+  editStudent:null
+};
+
+// ══════════════════════════════════════════════
+// SCREENSHOT / BLACK SCREEN
+// ══════════════════════════════════════════════
+
+// ══════════════════════════════════════════════
+// ROLE MANAGEMENT
+// ══════════════════════════════════════════════
+function setRole(role){
+  S.role=role;
+  if(role==="admin"){S.adminOK=true;}
+  // Show/hide tabs
+  var studentTabs=["tab-pre","tab-post"];
+  var adminTabs=["tab-results","tab-attend","tab-edit"];
+  studentTabs.forEach(function(id){
+    var el=document.getElementById(id);
+    if(el)el.style.display=role==="student"?"":"none";
+  });
+  adminTabs.forEach(function(id){
+    var el=document.getElementById(id);
+    if(el)el.style.display=role==="admin"?"":"none";
+  });
+  var sw=document.getElementById("tab-switch");
+  if(sw)sw.style.display="";
+  if(role==="student"){
+    // Go to open test, or pre if both closed
+    var ac=getAccess();
+    S.view=ac.post?"post":ac.pre?"pre":"pre";
+    S.phase="cover";
+    // Mark active tab
+    ["pre","post"].forEach(function(t){
+      var el=document.getElementById("tab-"+t);
+      if(el)el.classList.toggle("on",t===S.view);
+    });
+  } else {
+    S.view="results";
+    ["results","attend","edit"].forEach(function(t){
+      var el=document.getElementById("tab-"+t);
+      if(el)el.classList.toggle("on",t==="results");
+    });
+  }
+  render();
+}
+
+function switchRole(){
+  if(confirm("Return to the landing page?")){
+    S.role=null;S.adminOK=false;S.phase="cover";
+    // Hide all tabs
+    ["pre","post","results","attend","edit","switch"].forEach(function(id){
+      var el=document.getElementById("tab-"+id);
+      if(el)el.style.display="none";
+    });
+    render();
+  }
+}
+
+function showAdminLogin(){
+  var mr=document.getElementById("modal-root");
+  mr.innerHTML="<div class='modal-overlay' onclick='closeModal(event)'><div class='modal-box'>"
+    +"<div style='text-align:center;margin-bottom:18px;'><div style='font-size:42px;'>🔐</div><h3 style='font-family:Merriweather,serif;margin-top:8px;'>Examiner Login</h3></div>"
+    +"<div class='fg'><label>Admin Passcode</label>"
+    +"<input type='password' id='admin-pw' placeholder='Enter passcode' autofocus style='font-size:20px;letter-spacing:4px;text-align:center;'>"
+    +"<div id='admin-pw-err' style='color:#f87171;font-size:11px;margin-top:4px;display:none;'>Incorrect passcode. Try again.</div></div>"
+    +"<div style='display:flex;gap:8px;'>"
+    +"<button class='btn bgg' style='flex:1;justify-content:center;' onclick='checkAdminLogin()'>🔓 Enter Dashboard</button>"
+    +"<button class='btn bo' onclick='closeModal()'>Cancel</button>"
+    +"</div></div></div>";
+  var inp=document.getElementById("admin-pw");
+  if(inp)inp.onkeydown=function(e){if(e.key==="Enter")checkAdminLogin();};
+}
+
+function checkAdminLogin(){
+  var val=(document.getElementById("admin-pw").value||"").trim();
+  if(ADMIN_IDS.indexOf(val)>-1){
+    closeModal();
+    setRole("admin");
+  } else {
+    document.getElementById("admin-pw-err").style.display="block";
+  }
+}
+
+// Landing page
+function rLanding(){
+  var parts=[
+    "<div class='landing'><div>",
+    "<div style='text-align:center;margin-bottom:32px;'>",
+    "<div style='font-family:Merriweather,serif;font-size:13px;color:var(--muted);margin-bottom:6px;'>Sciences and Arts — MSA University</div>",
+    "<h1 style='font-family:Merriweather,serif;font-size:26px;color:var(--g2);margin-bottom:6px;'>Grammar Assessment System</h1>",
+    "<div style='font-size:12px;color:var(--dim);'>Verb Tenses | Pre-Test &amp; Post-Test | Spring 2026</div>",
+    "</div><div class='role-grid'>",
+    "<div class='role-card student' onclick='goStudent()'>",
+    "<div style='font-size:52px;margin-bottom:14px;'>&#127979;</div>",
+    "<div style='font-family:Merriweather,serif;font-size:18px;color:#4ade80;margin-bottom:8px;'>I am a Student</div>",
+    "<div style='font-size:12px;color:var(--muted);line-height:1.6;'>Enter the exam, answer questions, and submit within the time limit.</div>",
+    "<div style='margin-top:16px;background:linear-gradient(135deg,#059669,#10b981);color:#fff;padding:10px;border-radius:8px;font-weight:600;font-size:13px;'>Enter Exam →</div>",
+    "</div>",
+    "<div class='role-card admin' onclick='showAdminLogin()'>",
+    "<div style='font-size:52px;margin-bottom:14px;'>&#128272;</div>",
+    "<div style='font-family:Merriweather,serif;font-size:18px;color:var(--g2);margin-bottom:8px;'>I am an Examiner</div>",
+    "<div style='font-size:12px;color:var(--muted);line-height:1.6;'>Access the dashboard to manage tests, results, attendance, and analytics.</div>",
+    "<div style='margin-top:16px;background:linear-gradient(135deg,#d97706,#f59e0b);color:#1a0a00;padding:10px;border-radius:8px;font-weight:600;font-size:13px;'>Admin Dashboard →</div>",
+    "</div>",
+    "</div>",
+    "<div style='text-align:center;margin-top:20px;font-size:11px;color:var(--dim);'>Select your role to continue</div>",
+    "</div></div>"
+  ];
+  return parts.join("");
+}
+function goStudent(){setRole("student");}
+
+
+// ── ANTI-CHEAT ENGINE ────────────────────────
+var _cheatCount=0;
+var _wmInt=null;
+
+document.addEventListener("keydown",function(e){
+  if(S.phase==="taking"){
+    // Screenshot keys
+    if(e.key==="PrintScreen"||e.keyCode===44){showBlackScreen();logCheat("screenshot");}
+    // F12 / DevTools
+    if(e.keyCode===123){e.preventDefault();showBlackScreen();}
+    // Ctrl+Shift+I / Ctrl+Shift+J / Ctrl+U
+    if((e.ctrlKey||e.metaKey)&&e.shiftKey&&["i","j","c"].indexOf(e.key.toLowerCase())>-1){e.preventDefault();}
+    // Copy/paste/view-source
+    if((e.ctrlKey||e.metaKey)&&["c","v","a","u","s","p","x"].indexOf(e.key.toLowerCase())>-1){e.preventDefault();}
+  }
+});
+
+document.addEventListener("visibilitychange",function(){
+  if(S.phase==="taking"&&document.hidden){
+    _cheatCount++;
+    logCheat("tab_switch");
+    var badge=document.getElementById("cheat-badge");
+    var cnt=document.getElementById("cheat-count");
+    if(badge){badge.style.display="block";setTimeout(function(){badge.style.display="none";},3000);}
+    if(cnt)cnt.textContent=_cheatCount;
+    // Store cheat log
+    var log=JSON.parse(localStorage.getItem("gm_cheat_log")||"[]");
+    log.push({sid:S.student?S.student.sid:"",name:S.student?S.student.name:"",type:"tab_switch",count:_cheatCount,at:new Date().toISOString()});
+    localStorage.setItem("gm_cheat_log",JSON.stringify(log));
+    toast("⚠️ Tab switch detected! ("+_cheatCount+"x)",true);
+  }
+});
+
+document.addEventListener("copy",function(e){if(S.phase==="taking")e.preventDefault();});
+document.addEventListener("cut",function(e){if(S.phase==="taking")e.preventDefault();});
+document.addEventListener("paste",function(e){if(S.phase==="taking")e.preventDefault();});
+document.addEventListener("contextmenu",function(e){if(S.phase==="taking"){e.preventDefault();return false;}});
+// Prevent drag
+document.addEventListener("dragstart",function(e){if(S.phase==="taking")e.preventDefault();});
+
+function logCheat(type){
+  if(!S.student)return;
+  var log=JSON.parse(localStorage.getItem("gm_cheat_log")||"[]");
+  log.push({sid:S.student.sid,name:S.student.name,type:type,at:new Date().toISOString()});
+  localStorage.setItem("gm_cheat_log",JSON.stringify(log.slice(-100)));
+}
+
+// ── FLOATING WATERMARK ────────────────────────
+function startWatermark(name,sid){
+  var wm=document.getElementById("watermark");
+  if(!wm)return;
+  wm.textContent=name+" | "+sid;
+  wm.style.display="block";
+  function moveWM(){
+    var maxX=window.innerWidth-220,maxY=window.innerHeight-40;
+    wm.style.left=Math.max(10,Math.floor(Math.random()*maxX))+"px";
+    wm.style.top=Math.max(70,Math.floor(Math.random()*maxY))+"px";
+  }
+  moveWM();
+  _wmInt=setInterval(moveWM,4000);
+}
+function stopWatermark(){
+  var wm=document.getElementById("watermark");
+  if(wm)wm.style.display="none";
+  if(_wmInt){clearInterval(_wmInt);_wmInt=null;}
+}
+
+
+function showBlackScreen(){
+  var bs=document.getElementById("blackscreen");
+  if(!bs)return;
+  bs.classList.add("show");
+  logCheat("screenshot");
+  setTimeout(function(){bs.classList.remove("show");},3000);
+}
+
+// ══════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════
+function goTab(tab){
+  // Admin-only tabs require admin role
+  if(["results","edit","attend"].indexOf(tab)>-1&&!S.adminOK){
+    showAdminLogin();return;
+  }
+  S.view=tab;S.viewAttempt=null;S.editStudent=null;
+  ["pre","post","attend","results","edit"].forEach(function(t){
+    var el=document.getElementById("tab-"+t);
+    if(el)el.classList.toggle("on",t===tab);
+  });
+  render();
+}
+
+function showAdminGate(target){
+  var app=document.getElementById("app");
+  app.innerHTML="<div class='gate'><div class='gh'><h2>🔒 Admin Access</h2></div><div class='gb'>"
+    +"<div class='fg'><label>Admin ID</label><input type='password' id='gate-inp' placeholder='Enter admin ID' autofocus style='font-size:16px;letter-spacing:3px;'>"
+    +"<div id='gate-err' style='color:#f87171;font-size:11px;margin-top:4px;display:none;'>Incorrect.</div></div>"
+    +"<div style='display:flex;gap:8px;'><button class='btn bgg' onclick='chkAdmin(\""+target+"\")'>Unlock</button>"
+    +"<button class='btn bo' onclick='goTab(\"pre\")'>← Back</button></div></div></div>";
+  var inp=document.getElementById("gate-inp");
+  if(inp)inp.onkeydown=function(e){if(e.key==="Enter")chkAdmin(target);};
+}
+function chkAdmin(target){
+  var val=(document.getElementById("gate-inp").value||"").trim();
+  if(ADMIN_IDS.indexOf(val)>-1){S.adminOK=true;goTab(target);}
+  else{document.getElementById("gate-err").style.display="block";}
+}
+function updateBadges(){
+  var ac=getAccess();
+  ["pre","post"].forEach(function(t){
+    var b=document.getElementById(t+"-badge");
+    if(b){b.className="tbdg "+(ac[t]?"open":"closed");b.textContent=ac[t]?"OPEN":"LOCKED";}
+  });
+}
+
+// ══════════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════════
+function render(){
+  var app=document.getElementById("app");
+  var tb=document.getElementById("timer-bar");
+  updateBadges();
+  if(S.view==="results"){
+    if(S.viewAttempt)app.innerHTML=rAttemptDetail(S.viewAttempt);
+    else app.innerHTML=rResults();
+    if(tb)tb.className="timer-bar";
+    setTimeout(drawCharts,200);
+  } else if(S.view==="attend"){
+    app.innerHTML=rAttendance();
+    if(tb)tb.className="timer-bar";
+  } else if(S.view==="edit"){
+    if(S.editStudent!==null)app.innerHTML=rEditStudent(S.editStudent);
+    else app.innerHTML=rEdit();
+    if(tb)tb.className="timer-bar";
+  } else {
+    if(S.phase==="cover")app.innerHTML=rCover(S.view);
+    else if(S.phase==="taking")app.innerHTML=rTest();
+    else if(S.phase==="done")app.innerHTML=rDone();
+    if(tb)tb.className="timer-bar"+(S.phase==="taking"?" active":"");
+  }
+}
+
+// ══════════════════════════════════════════════
+// COVER
+// ══════════════════════════════════════════════
+function rCover(type){
+  var ac=getAccess();
+  var isOpen=ac[type];
+  var cfg=getExamConfig();
+  var label=type==="pre"?"Pre-Test":"Post-Test";
+  if(!isOpen&&!S.adminOK){
+    return "<div style='text-align:center;padding:60px 20px;'>"
+      +"<div style='font-size:56px;margin-bottom:14px;'>🔒</div>"
+      +"<h2 style='font-family:Merriweather,serif;color:var(--muted);margin-bottom:8px;'>"+label+" is Currently Locked</h2>"
+      +"<p style='font-size:13px;color:var(--dim);margin-bottom:20px;'>Waiting for the examiner to open this test.</p>"
+      +"<button class='btn bo' onclick='showAdminGate(\""+type+"\")'>🔑 Admin Login</button></div>";
+  }
+  return "<div class='gc'><div class='cover-top' style='background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(16,185,129,.07));padding:22px 18px;text-align:center;border-bottom:1px solid rgba(255,255,255,.07);border-radius:var(--r) var(--r) 0 0;'>"
+    +"<div style='font-size:10px;color:var(--muted);margin-bottom:5px;'>Sciences and Arts — MSA University</div>"
+    +"<h1 style='font-family:Merriweather,serif;font-size:18px;color:var(--g2);margin-bottom:3px;'>"+cfg.title+" — "+label+"</h1>"
+    +"<div style='font-size:11px;color:var(--muted);'>"+cfg.description+" | Spring 2026</div>"
+    +"</div><div class='gb'>"
+    +"<div style='display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:16px;'>"
+    +"<div class='stat-card'><div class='stat-val'>"+QS.length+"</div><div class='stat-lbl'>Questions</div></div>"
+    +"<div class='stat-card'><div class='stat-val'>"+cfg.mins+"</div><div class='stat-lbl'>Minutes</div></div>"
+    +"<div class='stat-card'><div class='stat-val'>"+QS.length+"</div><div class='stat-lbl'>Marks</div></div>"
+    +"</div>"
+    +"<div style='background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.18);border-radius:var(--rs);padding:11px 14px;margin-bottom:14px;'>"
+    +"<div style='font-size:10px;font-weight:700;color:var(--g2);margin-bottom:7px;'>📋 Instructions</div>"
+    +"<ul style='font-size:11px;color:var(--muted);padding-left:14px;display:flex;flex-direction:column;gap:4px;'>"
+    +"<li>Fill in each blank with the correct verb form shown in brackets</li>"
+    +"<li>Questions 7 and 17 have two blanks — separate with a comma</li>"
+    +"<li>The timer starts when you begin; auto-submit when it expires</li>"
+    +"<li>Do not leave or refresh this page during the test</li>"
+    +"</ul></div>"
+    +"<div class='egrd'>"
+    +"<div class='fg'><label>Full Name *</label><input type='text' id='s-name' placeholder='First and Last name' autocomplete='off'></div>"
+    +"<div class='fg'><label>Student ID *</label><input type='text' id='s-id' placeholder='e.g. 228051' maxlength='7' autocomplete='off'></div>"
+    +"<div class='fg'><label>Gender *</label><select id='s-gender'><option value='M'>Male</option><option value='F'>Female</option></select></div>"
+    +"<div class='fg'><label>Faculty *</label><select id='s-fac'>"+FACULTIES.map(function(f){return "<option>"+f+"</option>";}).join("")+"</select></div>"
+    +"</div>"
+    +"<div id='s-err' style='color:#f87171;font-size:11px;margin-bottom:9px;display:none;'>Please enter full name (2 words) and numeric ID.</div>"
+    +"<button class='btn bg lg' onclick='startTest(\""+type+"\")'>▶ Begin "+label+"</button>"
+    +"</div></div>";
+}
+
+function toggleAccess(type,val){
+  var ac=getAccess();ac[type]=val;setAccess(ac);
+  var lbl=document.getElementById("acc-lbl-"+type);
+  if(lbl){lbl.style.color=val?"#4ade80":"#f87171";lbl.textContent=val?"✅ Test is OPEN for students":"🔒 Test is CLOSED";}
+  updateBadges();
+  toast(val?"✅ "+type+"-test is now OPEN":"🔒 "+type+"-test is now CLOSED");
+}
+
+// ══════════════════════════════════════════════
+// START & TIMER
+// ══════════════════════════════════════════════
+function startTest(type){
+  var name=(document.getElementById("s-name").value||"").trim();
+  var sid=(document.getElementById("s-id").value||"").trim();
+  var gender=document.getElementById("s-gender").value;
+  var fac=document.getElementById("s-fac").value;
+  var err=document.getElementById("s-err");
+  if(name.split(/\s+/).filter(Boolean).length<2||!/^\d+$/.test(sid)){err.style.display="block";return;}
+  err.style.display="none";
+  S.testType=type;S.student={name:name,sid:sid,gender:gender,faculty:fac};
+  S.answers={};S.phase="taking";
+  _cheatCount=0;
+  var cfg=getExamConfig();
+  S.tLeft=cfg.mins*60;S.tTotal=cfg.mins*60;
+  render();
+  setTimeout(startTimer,100);
+  document.getElementById("tname").textContent=name+" ("+sid+")";
+  startWatermark(name,sid);
+}
+function startTimer(){
+  if(S.tInt)clearInterval(S.tInt);
+  S.tInt=setInterval(function(){
+    if(S.phase!=="taking"){clearInterval(S.tInt);return;}
+    S.tLeft--;
+    var m=Math.floor(S.tLeft/60),s=S.tLeft%60;
+    var el=document.getElementById("tdisp"),pg=document.getElementById("tprog");
+    if(el){el.textContent=(m<10?"0":"")+m+":"+(s<10?"0":"")+s;el.className="tdisp"+(S.tLeft<=60?" danger":S.tLeft<=300?" warn":"");}
+    if(pg)pg.style.width=(S.tLeft/S.tTotal*100)+"%";
+    if(S.tLeft<=0){clearInterval(S.tInt);toast("⏰ Time up — auto submitting…",true);setTimeout(function(){submitTest(true);},1500);}
+  },1000);
+}
+function stopTimer(){if(S.tInt){clearInterval(S.tInt);S.tInt=null;}}
+
+// ══════════════════════════════════════════════
+// TEST SCREEN (HINT-FREE — no tense labels)
+// ══════════════════════════════════════════════
+function rTest(){
+  var done=Object.keys(S.answers).filter(function(k){return(S.answers[k]||"").trim();}).length;
+  var h="<div class='exam-area'><div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;'>"
+    +"<div><h2 style='font-family:Merriweather,serif;font-size:15px;'>"+getExamConfig().title+"</h2>"
+    +"<div style='font-size:10px;color:var(--muted);margin-top:2px;'>"+S.student.name+" · "+S.student.sid+"</div></div>"
+    +"<div style='font-size:11px;color:var(--muted);background:rgba(255,255,255,.06);padding:4px 11px;border-radius:20px;'>"+done+"/20 answered</div>"
+    +"</div>";
+  QS.forEach(function(q,i){
+    var filled=(S.answers[i]||"").trim();
+    h+="<div class='qrow"+(filled?" answered":"")+"' id='qrow-"+i+"'>";
+    // NO tense label shown to student
+    h+="<div class='qnum'>Q"+(i+1)+"</div>";
+    if(q.ans.length===1){
+      var sv=S.answers[i]||"";
+      h+="<div class='qtxt'>"+q.q.replace("__________","<input class='blank-inp' id='ans-"+i+"' type='text' value=\""+esc(sv)+"\" placeholder='verb form…' oninput=\"saveA("+i+",this.value)\">")+"</div>";
+    } else {
+      var parts=q.q.split("__________");
+      var sv=(S.answers[i]||"").split(",");
+      h+="<div class='qtxt'>"+parts[0]
+        +"<input class='blank-inp' id='ans-"+i+"-0' type='text' value=\""+esc(sv[0]||"")+"\" placeholder='verb 1…' oninput=\"saveA2("+i+",0,this.value)\" style='width:120px;'>"
+        +(parts[1]||"")
+        +"<input class='blank-inp' id='ans-"+i+"-1' type='text' value=\""+esc(sv[1]||"")+"\" placeholder='verb 2…' oninput=\"saveA2("+i+",1,this.value)\" style='width:120px;'>"
+        +(parts[2]||"")+"</div>";
+    }
+    h+="</div>";
+  });
+  h+="<div style='margin-top:16px;margin-bottom:30px;'><button class='btn bgg lg' onclick='confirmSubmit()'>✅ Submit Test</button></div></div>";
+  return h;
+}
+
+function saveA(i,v){S.answers[i]=v.trim();var r=document.getElementById("qrow-"+i);if(r)r.className="qrow"+(v.trim()?" answered":"");}
+function saveA2(i,pos,v){var p=(S.answers[i]||",").split(",");while(p.length<2)p.push("");p[pos]=v.trim();S.answers[i]=p.join(",");var r=document.getElementById("qrow-"+i);if(r&&(p[0]||p[1]))r.classList.add("answered");}
+function esc(s){return(s||"").replace(/"/g,"&quot;").replace(/'/g,"&#039;");}
+
+function confirmSubmit(){
+  var blank=QS.filter(function(q,i){return!(S.answers[i]||"").trim();}).length;
+  if(blank>0){if(!confirm(blank+" unanswered question(s). Submit anyway?"))return;}
+  submitTest(false);
+}
+
+// ══════════════════════════════════════════════
+// SCORE & SUBMIT
+// ══════════════════════════════════════════════
+function scoreAnswers(answers){
+  var qs=getActiveQS();
+  return scoreAnswersCustom(answers,qs);
+}
+function _scoreAnswersOLD(answers){
+  var score=0;var details=[];
+  QS.forEach(function(q,i){
+    var raw=(answers[i]||"").toLowerCase().trim();
+    var correct=q.ans.length===1
+      ?q.ans.some(function(a){return a.toLowerCase()===raw;})
+      :q.ans.every(function(a,ai){return a.toLowerCase()===(raw.split(",").map(function(p){return p.trim();})[ai]||"");});
+    if(correct)score++;
+    details.push({q:q.q,student:answers[i]||"",correct:correct,why:q.why,tense:q.tense,expected:q.ans.join(" / ")});
+  });
+  return{score:score,details:details};
+}
+
+function submitTest(auto){
+  stopTimer();
+  stopWatermark();
+  var result=scoreAnswers(S.answers);
+  S.phase="done";S.lastResult=result;
+  var timeTaken=S.tTotal-S.tLeft;
+  var cfg=getExamConfig();
+  var entry={
+    id:Date.now().toString(),
+    name:S.student.name,sid:S.student.sid,
+    gender:S.student.gender,faculty:S.student.faculty,
+    score:result.score,details:result.details,
+    at:new Date().toISOString(),
+    timeTaken:cfg.showTimeTaken?timeTaken:null,
+    autoSubmit:auto
+  };
+  if(S.testType==="pre"){
+    var pre=getPreSubs();
+    var idx=pre.findIndex(function(p){return p.sid===S.student.sid;});
+    if(idx>-1)pre[idx]=entry;else pre.push(entry);
+    savePreSubs(pre);
+  } else {
+    var post=getPostSubs();
+    post.push(entry);
+    savePostSubs(post);
+  }
+  render();
+}
+
+// ══════════════════════════════════════════════
+// DONE SCREEN
+// ══════════════════════════════════════════════
+function rDone(){
+  var r=S.lastResult;
+  var pct=Math.round((r.score/20)*100);
+  var col=pct>=80?"#10b981":pct>=65?"#fbbf24":pct>=50?"#f97316":"#ef4444";
+  var gr=pct>=90?"A":pct>=80?"B+":pct>=75?"B":pct>=65?"C+":pct>=55?"C":pct>=50?"D":"F";
+  var h="<div style='text-align:center;margin-bottom:22px;'>"
+    +"<div style='display:inline-flex;flex-direction:column;align-items:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:20px 30px;margin-bottom:14px;'>"
+    +"<div style='font-size:50px;font-weight:900;color:"+col+";font-family:Merriweather,serif;'>"+r.score+"/20</div>"
+    +"<div style='font-size:13px;color:var(--muted);margin-top:4px;'>"+pct+"% · Grade "+gr+"</div>"
+    +"</div>"
+    +"<div style='font-size:12px;color:var(--muted);'>"+S.student.name+" · "+S.student.faculty+"</div>"
+    +"</div>";
+  if(S.testType==="post"){
+    h+="<div class='gc'><div class='gh'><h2>📝 Your Detailed Feedback</h2><p>Full answer sheet with explanations</p></div><div class='gb'>";
+    r.details.forEach(function(d,i){
+      h+="<div class='qrow "+(d.correct?"correct":"wrong")+"' style='margin-bottom:9px;'>";
+      h+="<div class='qnum'>"+(d.correct?"✅":"❌")+" Q"+(i+1)+"</div>";
+      h+="<div style='font-size:12px;margin-bottom:7px;'>"+d.q+"</div>";
+      h+="<div style='display:flex;gap:7px;flex-wrap:wrap;margin-bottom:6px;'>"
+        +"<div style='font-size:11px;background:"+(d.correct?"rgba(16,185,129,.15)":"rgba(239,68,68,.15)")+";border:1px solid "+(d.correct?"rgba(16,185,129,.4)":"rgba(239,68,68,.4)")+";border-radius:5px;padding:3px 9px;'>Your answer: <strong>"+(d.student||"(blank)")+"</strong></div>";
+      if(!d.correct)h+="<div style='font-size:11px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.35);border-radius:5px;padding:3px 9px;color:#a7f3d0;'>Correct: <strong>"+d.expected+"</strong></div>";
+      h+="</div>";
+      if(!d.correct)h+="<div class='why-box why-wrong'><strong>💡 Why: </strong>"+d.why+"</div>";
+      h+="</div>";
+    });
+    h+="</div></div>";
+  } else {
+    h+="<div class='gc'><div class='gb'><p style='text-align:center;color:var(--muted);padding:10px;font-size:12px;'>Pre-test score recorded ✅. Detailed feedback will be available after the post-test.</p></div></div>";
+  }
+  h+="<button class='btn bo lg' onclick='S.phase=\"cover\";render();'>🔄 New Student</button>";
+  return h;
+}
+
+// ══════════════════════════════════════════════
+// ATTENDANCE
+// ══════════════════════════════════════════════
+function rAttendance(){
+  var att=getAttendance();
+  var preSubs=getPreSubs();
+  var h="<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;'>"
+    +"<h2 style='font-family:Merriweather,serif;font-size:16px;'>✅ Attendance</h2>"
+    +"<div style='display:flex;gap:7px;'>"
+    +"<button class='btn bn' onclick='addSession()'>➕ Add Session</button>"
+    +"<button class='btn bgg' onclick='saveAttendanceNow()'>💾 Save Snapshot</button>"
+    +"<button class='btn bp' onclick='expAttExcel()'>📊 Excel</button>"
+    +"<button class='btn bo' onclick='expAttPDF()'>📄 PDF</button>"
+    +"</div></div>";
+
+  // Sessions configuration
+  h+="<div class='gc'><div class='gh'><h2>Sessions ("+att.sessions.length+")</h2><p>Each session gets its own attendance column</p></div><div class='gb'>";
+  if(!att.sessions.length){
+    h+="<p style='color:var(--muted);font-size:12px;'>No sessions yet. Click \"Add Session\" to create one.</p>";
+  } else {
+    att.sessions.forEach(function(sess,si){
+      h+="<div class='attend-box'>"
+        +"<span class='attend-lbl'>Session "+(si+1)+"</span>"
+        +"<input type='date' id='sess-date-"+si+"' value='"+sess.date+"' style='width:140px;padding:5px 8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:var(--text);font-size:12px;' onchange='updateSession("+si+",\"date\",this.value)'>"
+        +"<input type='number' id='sess-hrs-"+si+"' value='"+sess.hours+"' min='0' max='10' step='.5' style='width:60px;padding:5px 8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:var(--text);font-size:12px;' placeholder='hrs' onchange='updateSession("+si+",\"hours\",this.value)'>"
+        +"<span style='font-size:10px;color:var(--muted);'>hrs</span>"
+        +"<button class='btn br bsm' onclick='removeSession("+si+")'>✕</button>"
+        +"</div>";
+    });
+  }
+  h+="</div></div>";
+
+  // Attendance table
+  if(att.sessions.length>0){
+    h+="<div class='gc'><div class='gh'><h2>Student Attendance</h2><p>✓ = Present · ✗ = Absent. Absent students can be removed from records.</p></div>";
+    h+="<div class='gb' style='overflow-x:auto;'><table class='rtbl'><thead><tr><th>Name</th><th>ID</th>";
+    att.sessions.forEach(function(s,si){h+="<th>Session "+(si+1)+"<br><span style='font-weight:400;color:var(--dim);'>"+s.date+"</span></th>";});
+    h+="<th>Attended</th><th></th></tr></thead><tbody>";
+    preSubs.forEach(function(st){
+      var sid=st.sid;
+      var rec=att.records[sid]||{};
+      var total=att.sessions.filter(function(s,si){return rec[si];}).length;
+      h+="<tr>"
+        +"<td><strong>"+st.name+"</strong></td>"
+        +"<td style='font-family:JetBrains Mono,monospace;font-size:10px;'>"+sid+"</td>";
+      att.sessions.forEach(function(s,si){
+        var present=rec[si]===true;
+        h+="<td style='text-align:center;'>"
+          +"<input type='checkbox' "+(present?"checked":"")+" onchange='toggleAttend(\""+sid+"\","+si+",this.checked)' style='width:16px;height:16px;accent-color:#10b981;'>"
+          +"</td>";
+      });
+      var pct=att.sessions.length?Math.round((total/att.sessions.length)*100):0;
+      var col=pct>=75?"#10b981":pct>=50?"#fbbf24":"#ef4444";
+      h+="<td style='color:"+col+";font-weight:700;'>"+total+"/"+att.sessions.length+" ("+pct+"%)</td>"
+        +"<td><button class='btn br bsm' onclick='removeStudentFromRecords(\""+sid+"\")' title='Remove from records'>✕</button></td>"
+        +"</tr>";
+    });
+    h+="</tbody></table></div></div>";
+  }
+  // ── Attendance Snapshot History ──
+  var snaps=getAttSnapshots();
+  h+="<div class='gc'><div class='gh' style='justify-content:space-between;'>"
+    +"<h2>📦 Saved Snapshots ("+snaps.length+"/20)</h2>"
+    +"<p>Each 'Save Snapshot' press creates a restorable version</p></div><div class='gb'>";
+  if(!snaps.length){
+    h+="<p style='color:var(--muted);font-size:12px;'>No snapshots yet. Click 'Save Snapshot' to create one.</p>";
+  } else {
+    h+="<table class='rtbl'><thead><tr><th>Saved At</th><th>Sessions</th><th>Students</th><th></th></tr></thead><tbody>";
+    snaps.forEach(function(snap,idx){
+      h+="<tr><td>"+new Date(snap.ts).toLocaleString()+"</td>"
+        +"<td>"+snap.data.sessions.length+" sessions</td>"
+        +"<td>"+Object.keys(snap.data.records).length+" recorded</td>"
+        +"<td style='display:flex;gap:6px;'>"
+        +"<button class='btn bo bsm' onclick='restoreAttSnapshot("+idx+")'>Restore</button>"
+        +"</td></tr>";
+    });
+    h+="</tbody></table>";
+  }
+  h+="</div></div>";
+  return h;
+}
+
+function addSession(){
+  var att=getAttendance();
+  att.sessions.push({date:new Date().toISOString().slice(0,10),hours:2});
+  saveAttendance(att);render();
+}
+function removeSession(si){
+  if(!confirm("Remove Session "+(si+1)+"?"))return;
+  var att=getAttendance();
+  att.sessions.splice(si,1);
+  // Shift records
+  Object.keys(att.records).forEach(function(sid){
+    var newRec={};
+    Object.keys(att.records[sid]).forEach(function(k){
+      var ki=parseInt(k);
+      if(ki<si)newRec[ki]=att.records[sid][k];
+      else if(ki>si)newRec[ki-1]=att.records[sid][k];
+    });
+    att.records[sid]=newRec;
+  });
+  saveAttendance(att);render();
+}
+function updateSession(si,field,val){
+  var att=getAttendance();
+  att.sessions[si][field]=field==="hours"?parseFloat(val):val;
+  saveAttendance(att);
+}
+function toggleAttend(sid,si,val){
+  var att=getAttendance();
+  if(!att.records[sid])att.records[sid]={};
+  att.records[sid][si]=val;
+  saveAttendance(att);
+}
+function removeStudentFromRecords(sid){
+  if(!confirm("Remove this student from attendance records?"))return;
+  var att=getAttendance();
+  delete att.records[sid];
+  saveAttendance(att);
+  // Also remove from pre-test subs
+  var pre=getPreSubs();
+  pre=pre.filter(function(s){return s.sid!==sid;});
+  savePreSubs(pre);
+  render();toast("Student removed from records");
+}
+function saveAttendanceNow(){
+  var att=getAttendance();
+  att.sessions.forEach(function(s,si){
+    var d=document.getElementById("sess-date-"+si);
+    var hEl=document.getElementById("sess-hrs-"+si);
+    if(d)s.date=d.value;
+    if(hEl)s.hours=parseFloat(hEl.value)||0;
+  });
+  saveAttendance(att);
+  // Save snapshot
+  var snapshots=gLS("gm_att_snaps")||[];
+  snapshots.unshift({ts:Date.now(),data:JSON.parse(JSON.stringify(att))});
+  if(snapshots.length>20)snapshots=snapshots.slice(0,20);
+  sLS("gm_att_snaps",snapshots);
+  toast("✅ Attendance saved & snapshot created");
+  render();
+}
+function getAttSnapshots(){return gLS("gm_att_snaps")||[];}
+function restoreAttSnapshot(idx){
+  var snaps=getAttSnapshots();
+  if(!snaps[idx])return;
+  if(!confirm("Restore attendance snapshot from "+new Date(snaps[idx].ts).toLocaleString()+"?"))return;
+  saveAttendance(snaps[idx].data);
+  render();toast("✅ Attendance restored");
+}
+function expAttExcel(){
+  if(typeof XLSX==="undefined"){toast("Loading…",true);return;}
+  var att=getAttendance();
+  var preSubs=getPreSubs();
+  var wb=XLSX.utils.book_new();
+  var rows=[["Name","ID"].concat(att.sessions.map(function(s,si){return "Session "+(si+1)+" ("+s.date+")";},[])).concat(["Total","% Attended"])];
+  preSubs.forEach(function(st){
+    var rec=att.records[st.sid]||{};
+    var total=att.sessions.filter(function(s,si){return rec[si];}).length;
+    var pct=att.sessions.length?Math.round(total/att.sessions.length*100):0;
+    var row=[st.name,st.sid].concat(att.sessions.map(function(s,si){return rec[si]?"✓":"✗";})).concat([total+"/"+att.sessions.length,pct+"%"]);
+    rows.push(row);
+  });
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rows),"Attendance");
+  // Total hours per session
+  var hoursRow=["HOURS",""].concat(att.sessions.map(function(s){return s.hours+"h";}));
+  rows.splice(1,0,hoursRow);
+  XLSX.writeFile(wb,"MSA_Attendance_"+new Date().toISOString().slice(0,10)+".xlsx");
+  toast("📊 Attendance Excel exported!");
+}
+function expAttPDF(){
+  var att=getAttendance();
+  var preSubs=getPreSubs();
+  var w=window.open("","_blank","width=900,height=700");
+  if(!w){toast("Allow popups",true);return;}
+  var headerCols=att.sessions.map(function(s,si){return "<th>S"+(si+1)+"<br><span style='font-weight:400;font-size:9px;'>"+s.date+"<br>"+s.hours+"h</span></th>";}).join("");
+  var rows=preSubs.map(function(st){
+    var rec=att.records[st.sid]||{};
+    var total=att.sessions.filter(function(s,si){return rec[si];}).length;
+    var pct=att.sessions.length?Math.round(total/att.sessions.length*100):0;
+    var cells=att.sessions.map(function(s,si){return "<td style='text-align:center;color:"+(rec[si]?"#059669":"#dc2626")+";font-weight:700;'>"+(rec[si]?"✓":"✗")+"</td>";}).join("");
+    return "<tr><td>"+st.name+"</td><td>"+st.sid+"</td>"+cells+"<td style='font-weight:700;color:"+(pct>=75?"#059669":pct>=50?"#d97706":"#dc2626")+";'>"+total+"/"+att.sessions.length+" ("+pct+"%)</td></tr>";
+  }).join("");
+  w.document.write("<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Attendance</title><style>body{font-family:Georgia,serif;margin:20px;}h1{color:#1e3a5f;border-bottom:3px solid #d97706;padding-bottom:8px;}table{width:100%;border-collapse:collapse;font-size:12px;}th{background:#1e3a5f;color:#fff;padding:6px;}td{padding:6px;border-bottom:1px solid #e2e8f0;}@media print{.noprint{display:none;}}</style></head><body>");
+  w.document.write("<h1>Attendance Report</h1><p style='font-size:11px;'>MSA University · "+new Date().toLocaleDateString()+"</p>");
+  w.document.write("<table><thead><tr><th>Name</th><th>ID</th>"+headerCols+"<th>Total</th></tr></thead><tbody>"+rows+"</tbody></table>");
+  w.document.write("<br><button class='noprint' onclick='window.print()' style='padding:9px 18px;background:#1e3a5f;color:#fff;border:none;border-radius:6px;cursor:pointer;'>🖨️ Print PDF</button></body></html>");
+  w.document.close();setTimeout(function(){w.print();},600);
+  toast("📄 Attendance PDF ready");
+}
+
+// ══════════════════════════════════════════════
+// RESULTS DASHBOARD
+// ══════════════════════════════════════════════
+function rResults(){
+  var preSubs=getPreSubs();
+  var postSubs=getPostSubs();
+  var ac=getAccess();
+
+  var h="<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;'>"
+    +"<h2 style='font-family:Merriweather,serif;font-size:16px;'>📊 Results Dashboard</h2>"
+    +"<div style='display:flex;gap:7px;'>"
+    +"<button class='btn bn' onclick='expExcel()'>📊 Excel</button>"
+    +"<button class='btn bp' onclick='expPDF()'>📄 PDF</button>"
+    +"</div></div>";
+
+  // Access control
+  h+="<div class='gc' style='border-color:rgba(245,158,11,.25);'><div class='gh'><h2>⚙️ Live Access Control</h2></div><div class='gb'>"
+    +"<div style='display:grid;grid-template-columns:1fr 1fr;gap:10px;'>";
+  ["pre","post"].forEach(function(type){
+    var isOpen=ac[type];
+    h+="<div style='background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--rs);padding:12px;'>"
+      +"<div style='font-weight:600;font-size:12px;margin-bottom:8px;'>"+(type==="pre"?"Pre-Test":"Post-Test")+"</div>"
+      +"<div style='display:flex;align-items:center;gap:8px;'>"
+      +"<label class='toggle'><input type='checkbox' "+(isOpen?"checked":"")+" onchange='toggleAccess(\""+type+"\",this.checked)'><span class='tslider'></span></label>"
+      +"<span style='font-size:11px;font-weight:600;color:"+(isOpen?"#4ade80":"#f87171")+";' id='acc-lbl-"+type+"'>"+(isOpen?"OPEN":"CLOSED")+"</span>"
+      +"</div></div>";
+  });
+  h+="</div></div></div>";
+
+  // Pre-test table
+  h+=rResultsTable("Pre-Test Submissions",preSubs,"pre");
+  if(preSubs.length){h+=rStatPanel("Pre-Test Statistics",preSubs);}
+
+  // Post-test table
+  h+=rResultsTable("Post-Test Submissions",postSubs,"post");
+  if(postSubs.length){h+=rStatPanel("Post-Test Statistics",postSubs);}
+
+  // Comparison
+  if(preSubs.length&&postSubs.length){h+=rComparison(preSubs,postSubs);}
+
+  // Demographic charts
+  if(preSubs.length){h+=rDemographics(preSubs);}
+
+  // Cheat log
+  h+=rCheatLog();
+
+  // Manual grade override panel
+  h+=rGradeOverride(postSubs);
+
+  // Student progress analysis
+  if(preSubs.length&&postSubs.length){h+=rStudentProgress(preSubs,postSubs);}
+
+  return h;
+}
+
+function rResultsTable(title,subs,type){
+  var h="<div class='gc' style='margin-bottom:13px;'><div class='gh' style='justify-content:space-between;'>"
+    +"<div><h2>"+title+"</h2><p>"+subs.length+" record(s) — click View for full answer sheet</p></div>"
+    +"<div style='display:flex;gap:6px;'>";
+  if(type==="pre")h+="<button class='btn bn bsm' onclick='addStudentModal()'>➕ Add</button>";
+  if(type==="post")h+="<button class='btn br bsm' onclick='clearSubs(\"post\")'>🗑️ Clear</button>";
+  h+="</div></div>";
+  if(!subs.length)return h+"<div class='gb'><p style='text-align:center;color:var(--dim);padding:20px;'>No submissions yet.</p></div></div>";
+  h+="<div class='gb' style='overflow-x:auto;'><table class='rtbl'><thead><tr><th>#</th><th>Name</th><th>ID</th><th>Gender</th><th>Faculty</th><th>Score/20</th><th>%</th><th>Date</th><th></th><th></th></tr></thead><tbody>";
+  subs.forEach(function(s,i){
+    var pct=Math.round((s.score/20)*100);
+    var col=pct>=80?"#10b981":pct>=65?"#fbbf24":pct>=50?"#f97316":"#ef4444";
+    h+="<tr>"
+      +"<td style='color:var(--muted);'>"+(i+1)+"</td>"
+      +"<td><strong>"+s.name+"</strong></td>"
+      +"<td style='font-family:JetBrains Mono,monospace;font-size:10px;'>"+s.sid+"</td>"
+      +"<td><span class='bdg "+(s.gender==="F"?"bdg-f":"bdg-m")+"'>"+(s.gender==="F"?"F":"M")+"</span></td>"
+      +"<td style='font-size:10px;color:var(--muted);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;'>"+((s.faculty||"").replace("Faculty of ",""))+"</td>"
+      +"<td><strong style='color:"+col+";'>"+s.score+"</strong></td>"
+      +"<td style='font-size:10px;color:var(--muted);'>"+pct+"%</td>"
+      +"<td style='font-size:10px;color:var(--dim);'>"+new Date(s.at).toLocaleDateString()+"</td>"
+      +"<td><button class='btn bo bsm' onclick='viewAttempt(\""+type+"\","+i+")'>View</button></td>"
+      +"<td><button class='btn bn bsm' onclick='editStudentRecord(\""+type+"\","+i+")'>Edit</button></td>"
+      +"</tr>";
+  });
+  h+="</tbody></table></div></div>";
+  return h;
+}
+
+function rStatPanel(title,subs){
+  var scores=subs.map(function(s){return s.score;});
+  var n=scores.length;
+  var mean=scores.reduce(function(a,b){return a+b;},0)/n;
+  var sd=Math.sqrt(scores.reduce(function(a,b){return a+Math.pow(b-mean,2);},0)/n);
+  var sorted=scores.slice().sort(function(a,b){return a-b;});
+  var med=n%2===0?(sorted[n/2-1]+sorted[n/2])/2:sorted[Math.floor(n/2)];
+  var males=subs.filter(function(s){return s.gender==="M";});
+  var females=subs.filter(function(s){return s.gender==="F";});
+  var mAvg=males.length?males.reduce(function(a,s){return a+s.score;},0)/males.length:0;
+  var fAvg=females.length?females.reduce(function(a,s){return a+s.score;},0)/females.length:0;
+  var h="<div class='gc' style='margin-bottom:13px;'><div class='gh'><h2>📈 "+title+"</h2></div><div class='gb'>"
+    +"<div class='stat-grid'>"
+    +"<div class='stat-card'><div class='stat-val'>"+mean.toFixed(2)+"</div><div class='stat-lbl'>Mean /20</div></div>"
+    +"<div class='stat-card'><div class='stat-val'>"+sd.toFixed(2)+"</div><div class='stat-lbl'>Std Dev</div></div>"
+    +"<div class='stat-card'><div class='stat-val'>"+med.toFixed(1)+"</div><div class='stat-lbl'>Median</div></div>"
+    +"<div class='stat-card'><div class='stat-val'>"+sorted[0]+"–"+sorted[n-1]+"</div><div class='stat-lbl'>Range</div></div>"
+    +"</div>"
+    +"<div style='display:flex;gap:8px;flex-wrap:wrap;'>"
+    +"<div style='background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:var(--rs);padding:10px 14px;'>"
+    +"<div style='font-size:18px;font-weight:700;color:#93c5fd;'>"+males.length+" ♂ · "+mAvg.toFixed(1)+"/20</div><div style='font-size:10px;color:var(--muted);'>Males</div></div>"
+    +"<div style='background:rgba(236,72,153,.08);border:1px solid rgba(236,72,153,.2);border-radius:var(--rs);padding:10px 14px;'>"
+    +"<div style='font-size:18px;font-weight:700;color:#f9a8d4;'>"+females.length+" ♀ · "+fAvg.toFixed(1)+"/20</div><div style='font-size:10px;color:var(--muted);'>Females</div></div>"
+    +"</div></div></div>";
+  return h;
+}
+
+function rComparison(preSubs,postSubs){
+  var pairs=[];
+  postSubs.forEach(function(post){
+    var pre=preSubs.find(function(p){return p.sid===post.sid;});
+    if(pre)pairs.push({name:post.name,sid:post.sid,pre:pre.score,post:post.score,gain:post.score-pre.score});
+  });
+  if(!pairs.length)return "";
+  var n=pairs.length;
+  var preMean=pairs.reduce(function(a,p){return a+p.pre;},0)/n;
+  var postMean=pairs.reduce(function(a,p){return a+p.post;},0)/n;
+  var gainMean=pairs.reduce(function(a,p){return a+p.gain;},0)/n;
+  var ttest=pairedTTest(pairs.map(function(p){return p.pre;}),pairs.map(function(p){return p.post;}));
+  var sig=ttest.p<0.05;
+  var h="<div class='gc' style='margin-bottom:13px;border-color:rgba(139,92,246,.3);'>"
+    +"<div class='gh'><h2>🔬 Pre vs Post Comparison — Paired T-Test</h2><p>"+n+" matched student pairs</p></div><div class='gb'>"
+    +"<div class='stat-grid'>"
+    +"<div class='stat-card' style='background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.2);'><div class='stat-val' style='color:#93c5fd;'>"+preMean.toFixed(2)+"</div><div class='stat-lbl'>Pre Mean</div></div>"
+    +"<div class='stat-card' style='background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.2);'><div class='stat-val' style='color:#4ade80;'>"+postMean.toFixed(2)+"</div><div class='stat-lbl'>Post Mean</div></div>"
+    +"<div class='stat-card' style='background:"+(gainMean>=0?"rgba(16,185,129,.08)":"rgba(239,68,68,.08)")+";border-color:"+(gainMean>=0?"rgba(16,185,129,.2)":"rgba(239,68,68,.2)")+";'>"
+    +"<div class='stat-val' style='color:"+(gainMean>=0?"#4ade80":"#f87171")+";'>"+(gainMean>=0?"+":"")+gainMean.toFixed(2)+"</div><div class='stat-lbl'>Mean Gain</div></div>"
+    +"<div class='stat-card' style='background:rgba(139,92,246,.08);border-color:rgba(139,92,246,.2);'><div class='stat-val' style='color:#ddd6fe;'>"+ttest.t.toFixed(3)+"</div><div class='stat-lbl'>t-value</div></div>"
+    +"</div>"
+    +"<div style='background:rgba("+(sig?"16,185,129":"239,68,68")+",.08);border:1px solid rgba("+(sig?"16,185,129":"239,68,68")+",.25);border-radius:var(--rs);padding:12px;margin-bottom:13px;'>"
+    +"<strong style='color:"+(sig?"#4ade80":"#f87171")+";'>"+(sig?"✅ Statistically Significant (p < 0.05)":"❌ Not Statistically Significant (p ≥ 0.05)")+"</strong>"
+    +"<div style='font-size:11px;color:var(--muted);margin-top:4px;'>t("+ttest.df+") = "+ttest.t.toFixed(4)+", p = "+ttest.p.toFixed(4)+"</div>"
+    +"</div>"
+    +"<div style='display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;'>"
+    +"<div class='chw'><h3>Pre vs Post Scores</h3><canvas id='ch-pp' height='140'></canvas></div>"
+    +"<div class='chw'><h3>Learning Gain per Student</h3><canvas id='ch-gain' height='140'></canvas></div>"
+    +"</div>"
+    +"<table class='rtbl'><thead><tr><th>Name</th><th>ID</th><th>Pre/20</th><th>Post/20</th><th>Gain</th><th>% Change</th></tr></thead><tbody>";
+  pairs.forEach(function(p){
+    var pct=p.pre>0?Math.round(((p.post-p.pre)/p.pre)*100):0;
+    var col=p.gain>0?"#10b981":p.gain<0?"#ef4444":"#94a3b8";
+    h+="<tr><td><strong>"+p.name+"</strong></td><td style='font-size:10px;font-family:JetBrains Mono,monospace;'>"+p.sid+"</td>"
+      +"<td>"+p.pre+"</td><td><strong>"+p.post+"</strong></td>"
+      +"<td><span style='color:"+col+";font-weight:700;'>"+(p.gain>0?"+":"")+p.gain+"</span></td>"
+      +"<td style='font-size:10px;color:var(--muted);'>"+(p.gain>0?"+":"")+pct+"%</td></tr>";
+  });
+  h+="</tbody></table></div></div>";
+  return h;
+}
+
+function rDemographics(subs){
+  var males=subs.filter(function(s){return s.gender==="M";}).length;
+  var females=subs.filter(function(s){return s.gender==="F";}).length;
+  var byFac={};
+  subs.forEach(function(s){var f=s.faculty||"Unknown";if(!byFac[f])byFac[f]=0;byFac[f]++;});
+  var h="<div class='gc' style='margin-bottom:13px;'><div class='gh'><h2>👥 Demographics</h2></div><div class='gb'>"
+    +"<div style='display:grid;grid-template-columns:1fr 1fr;gap:12px;'>"
+    +"<div class='chw'><h3>Gender Distribution</h3><canvas id='ch-gender' height='140'></canvas></div>"
+    +"<div class='chw'><h3>Faculty Distribution</h3><canvas id='ch-fac' height='140'></canvas></div>"
+    +"</div></div></div>";
+  return h;
+}
+
+// ══════════════════════════════════════════════
+// ATTEMPT DETAIL
+// ══════════════════════════════════════════════
+function viewAttempt(type,idx){S.viewAttempt={type:type,idx:idx};render();}
+
+function rAttemptDetail(va){
+  var subs=va.type==="pre"?getPreSubs():getPostSubs();
+  var sub=subs[va.idx];
+  if(!sub)return "<p>Not found</p>";
+  var pct=Math.round((sub.score/20)*100);
+  var col=pct>=80?"#10b981":pct>=65?"#fbbf24":pct>=50?"#f97316":"#ef4444";
+  var h="<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;'>"
+    +"<div><h2 style='font-family:Merriweather,serif;font-size:15px;'>"+sub.name+" — "+(va.type==="pre"?"Pre":"Post")+"-Test Answer Sheet</h2>"
+    +"<div style='font-size:10px;color:var(--muted);'>ID: "+sub.sid+" · "+sub.faculty+" · Submitted: "+new Date(sub.at).toLocaleString()+"</div></div>"
+    +"<button class='btn bo' onclick='S.viewAttempt=null;render();'>← Back</button>"
+    +"</div>"
+    +"<div style='text-align:center;margin-bottom:18px;'>"
+    +"<div style='display:inline-flex;flex-direction:column;align-items:center;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:16px 24px;'>"
+    +"<div style='font-size:44px;font-weight:900;color:"+col+";font-family:Merriweather,serif;'>"+sub.score+"/20</div>"
+    +"<div style='font-size:12px;color:var(--muted);'>"+pct+"% · "+sub.gender+" · "+((sub.faculty||"").replace("Faculty of ",""))+"</div>"
+    +"</div></div>"
+    +"<div class='gc'><div class='gh'><h2>Complete Answer Sheet</h2><p>All 20 questions — student answers vs correct answers</p></div><div class='gb'>";
+  (sub.details||[]).forEach(function(d,i){
+    h+="<div style='background:rgba(255,255,255,."+(d.correct?"06":"03")+");border:1px solid rgba("+(d.correct?"16,185,129":"239,68,68")+",."+(d.correct?"4":"35")+");border-radius:var(--rs);padding:11px 14px;margin-bottom:8px;'>"
+      +"<div style='font-size:9px;font-weight:700;color:var(--gold);margin-bottom:4px;'>"+(d.correct?"✅":"❌")+" Q"+(i+1)+" · "+d.tense+"</div>"
+      +"<div style='font-size:12px;margin-bottom:7px;'>"+d.q+"</div>"
+      +"<div style='display:flex;gap:7px;flex-wrap:wrap;margin-bottom:"+(d.correct?"0":"5px")+";'>"
+      +"<div style='font-size:11px;background:"+(d.correct?"rgba(16,185,129,.15)":"rgba(239,68,68,.15)")+";border:1px solid "+(d.correct?"rgba(16,185,129,.4)":"rgba(239,68,68,.4)")+";border-radius:5px;padding:3px 9px;'>Student: <strong>"+(d.student||"(blank)")+"</strong></div>";
+    if(!d.correct)h+="<div style='font-size:11px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.35);border-radius:5px;padding:3px 9px;color:#a7f3d0;'>Correct: <strong>"+d.expected+"</strong></div>";
+    h+="</div>";
+    if(!d.correct)h+="<div class='why-box why-wrong'><strong>Why: </strong>"+d.why+"</div>";
+    h+="</div>";
+  });
+  h+="</div></div>";
+  return h;
+}
+
+// ══════════════════════════════════════════════
+// EDIT STUDENT RECORD
+// ══════════════════════════════════════════════
+function editStudentRecord(type,idx){
+  var subs=type==="pre"?getPreSubs():getPostSubs();
+  var sub=subs[idx];
+  if(!sub)return;
+  S.editStudent={type:type,idx:idx,data:JSON.parse(JSON.stringify(sub))};
+  S.view="edit";
+  ["pre","post","attend","results","edit"].forEach(function(t){var el=document.getElementById("tab-"+t);if(el)el.classList.toggle("on",t==="edit");});
+  render();
+}
+
+function rEditStudent(es){
+  var sub=es.data;
+  var h="<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;'>"
+    +"<h2 style='font-family:Merriweather,serif;font-size:15px;'>✏️ Edit Student Record</h2>"
+    +"<div style='display:flex;gap:7px;'>"
+    +"<button class='btn bgg' onclick='saveStudentEdit()'>💾 Save</button>"
+    +"<button class='btn bo' onclick='S.editStudent=null;goTab(\"results\");'>← Cancel</button>"
+    +"</div></div>"
+    +"<div class='gc'><div class='gh'><h2>Student Info</h2></div><div class='gb'>"
+    +"<div class='egrd'>"
+    +"<div class='fg'><label>Full Name</label><input type='text' id='ed-name' value='"+esc(sub.name)+"'></div>"
+    +"<div class='fg'><label>Student ID</label><input type='text' id='ed-sid' value='"+esc(sub.sid)+"'></div>"
+    +"<div class='fg'><label>Gender</label><select id='ed-gender'><option value='M' "+(sub.gender==="M"?"selected":"")+"'>Male</option><option value='F' "+(sub.gender==="F"?"selected":"")+"'>Female</option></select></div>"
+    +"<div class='fg'><label>Faculty</label><select id='ed-fac'>"+FACULTIES.map(function(f){return "<option "+(f===sub.faculty?"selected":"")+">"+f+"</option>";}).join("")+"</select></div>"
+    +"<div class='fg'><label>Score /20</label><input type='number' id='ed-score' value='"+sub.score+"' min='0' max='20'></div>"
+    +"<div class='fg'><label>Date</label><input type='date' id='ed-date' value='"+sub.at.slice(0,10)+"'></div>"
+    +"</div></div></div>"
+    +"<div class='gc'><div class='gh'><h2>Answers (20 questions)</h2><p>Edit individual answers — score will NOT auto-recalculate</p></div><div class='gb'>";
+  (sub.answers||[]).forEach(function(ans,i){
+    h+="<div class='fg'><label>Q"+(i+1)+": "+QS[i].q.slice(0,50)+"…</label><input type='text' id='ed-ans-"+i+"' value='"+esc(ans)+"'></div>";
+  });
+  h+="</div></div>"
+    +"<button class='btn br' onclick='deleteStudentRecord()'>🗑️ Delete This Record</button>";
+  return h;
+}
+
+function saveStudentEdit(){
+  var es=S.editStudent;
+  var subs=es.type==="pre"?getPreSubs():getPostSubs();
+  var sub=subs[es.idx];
+  sub.name=(document.getElementById("ed-name").value||"").trim();
+  sub.sid=(document.getElementById("ed-sid").value||"").trim();
+  sub.gender=document.getElementById("ed-gender").value;
+  sub.faculty=document.getElementById("ed-fac").value;
+  sub.score=parseInt(document.getElementById("ed-score").value)||0;
+  sub.at=document.getElementById("ed-date").value+"T09:00:00.000Z";
+  var newAnswers=[];
+  for(var i=0;i<20;i++){
+    var el=document.getElementById("ed-ans-"+i);
+    newAnswers.push(el?el.value:"");
+  }
+  sub.answers=newAnswers;
+  // Rebuild details
+  var result=scoreAnswers(newAnswers);
+  sub.details=result.details;
+  if(es.type==="pre"){subs[es.idx]=sub;savePreSubs(subs);}
+  else{subs[es.idx]=sub;savePostSubs(subs);}
+  toast("✅ Student record updated");
+  S.editStudent=null;
+  goTab("results");
+}
+
+function deleteStudentRecord(){
+  var es=S.editStudent;
+  if(!confirm("Delete this record permanently?"))return;
+  var subs=es.type==="pre"?getPreSubs():getPostSubs();
+  subs.splice(es.idx,1);
+  if(es.type==="pre")savePreSubs(subs);else savePostSubs(subs);
+  S.editStudent=null;
+  toast("Record deleted");
+  goTab("results");
+}
+
+// ══════════════════════════════════════════════
+// ADD STUDENT MODAL
+// ══════════════════════════════════════════════
+function addStudentModal(){
+  var mr=document.getElementById("modal-root");
+  mr.innerHTML="<div class='modal-overlay' onclick='closeModal(event)'><div class='modal-box'>"
+    +"<h3 style='font-family:Merriweather,serif;margin-bottom:14px;'>➕ Add Student to Pre-Test</h3>"
+    +"<div class='egrd'>"
+    +"<div class='fg'><label>Full Name</label><input type='text' id='add-name' placeholder='First Last'></div>"
+    +"<div class='fg'><label>Student ID</label><input type='text' id='add-sid' placeholder='228051'></div>"
+    +"<div class='fg'><label>Gender</label><select id='add-gender'><option value='M'>Male</option><option value='F'>Female</option></select></div>"
+    +"<div class='fg'><label>Faculty</label><select id='add-fac'>"+FACULTIES.map(function(f){return "<option>"+f+"</option>";}).join("")+"</select></div>"
+    +"<div class='fg'><label>Score /20</label><input type='number' id='add-score' value='0' min='0' max='20'></div>"
+    +"<div class='fg'><label>Date</label><input type='date' id='add-date' value='"+new Date().toISOString().slice(0,10)+"'></div>"
+    +"</div>"
+    +"<div style='display:flex;gap:8px;margin-top:8px;'>"
+    +"<button class='btn bgg' onclick='addStudentRecord()'>✅ Add</button>"
+    +"<button class='btn bo' onclick='closeModal()'>Cancel</button>"
+    +"</div></div></div>";
+}
+function addStudentRecord(){
+  var name=(document.getElementById("add-name").value||"").trim();
+  var sid=(document.getElementById("add-sid").value||"").trim();
+  var gender=document.getElementById("add-gender").value;
+  var fac=document.getElementById("add-fac").value;
+  var score=parseInt(document.getElementById("add-score").value)||0;
+  var date=document.getElementById("add-date").value;
+  if(!name||!sid){toast("Name and ID required",true);return;}
+  var pre=getPreSubs();
+  pre.push({name:name,sid:sid,gender:gender,faculty:fac,score:score,answers:[],details:[],at:date+"T09:00:00.000Z"});
+  savePreSubs(pre);
+  closeModal();toast("✅ Student added");render();
+}
+function closeModal(e){
+  if(!e||e.target.classList.contains("modal-overlay")){document.getElementById("modal-root").innerHTML="";}
+}
+
+// ══════════════════════════════════════════════
+// EDIT TAB (Exam config + version history)
+// ══════════════════════════════════════════════
+function rEdit(){
+  var cfg=getExamConfig();
+  var histPre=getHistory("pre");
+  var histPost=getHistory("post");
+  var histQS=gLS("gm_hist_qs")||[];
+  var qs=getActiveQS();
+  var h="<h2 style='font-family:Merriweather,serif;font-size:16px;margin-bottom:14px;'>✏️ Edit</h2>";
+
+  // ── Exam Settings ──
+  h+="<div class='gc'><div class='gh'><h2>⚙️ Exam Settings</h2></div><div class='gb'>"
+    +"<div class='egrd'>"
+    +"<div class='fg'><label>Exam Type</label><select id='cfg-type'>"
+    +"<option value='grammar' "+(cfg.type==="grammar"?"selected":"")+">Grammar — Verb Tenses</option>"
+    +"<option value='vocabulary' "+(cfg.type==="vocabulary"?"selected":"")+">Vocabulary</option>"
+    +"<option value='writing' "+(cfg.type==="writing"?"selected":"")+">Writing</option>"
+    +"<option value='listening' "+(cfg.type==="listening"?"selected":"")+">Listening</option>"
+    +"<option value='reading' "+(cfg.type==="reading"?"selected":"")+">Reading</option>"
+    +"</select></div>"
+    +"<div class='fg'><label>Exam Title</label><input type='text' id='cfg-title' value='"+esc(cfg.title)+"'></div>"
+    +"<div class='fg'><label>Description</label><input type='text' id='cfg-desc' value='"+esc(cfg.description)+"'></div>"
+    +"<div class='fg'><label>Time (minutes)</label><input type='number' id='cfg-mins' value='"+cfg.mins+"' min='5' max='180'></div>"
+    +"</div>"
+    +"<div style='display:flex;align-items:center;gap:10px;margin-bottom:12px;'>"
+    +"<label class='toggle'><input type='checkbox' id='cfg-timetaken' "+(cfg.showTimeTaken?"checked":"")+"><span class='tslider'></span></label>"
+    +"<span style='font-size:12px;'>Show Time Taken in results</span>"
+    +"</div>"
+    +"<button class='btn bgg' onclick='saveConfig()'>💾 Save Settings</button>"
+    +"</div></div>";
+
+  // ── Question Editor ──
+  h+="<div class='gc'><div class='gh' style='justify-content:space-between;'>"
+    +"<div><h2>📝 Question Editor</h2><p>Edit questions and correct answers. Auto-rescores all existing submissions.</p></div>"
+    +"<div style='display:flex;gap:7px;'>"
+    +"<button class='btn bn bsm' onclick='addQuestion()'>➕ Add Q</button>"
+    +"<button class='btn bgg bsm' onclick='saveQuestions()'>💾 Save & Rescore</button>"
+    +"<button class='btn br bsm' onclick='resetQuestions()'>↺ Reset to Default</button>"
+    +"</div></div><div class='gb' id='qs-editor'>";
+  qs.forEach(function(q,i){
+    h+="<div style='background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--rs);padding:12px;margin-bottom:10px;' id='qblock-"+i+"'>"
+      +"<div style='display:flex;align-items:center;gap:8px;margin-bottom:8px;'>"
+      +"<span style='font-size:10px;font-weight:700;color:var(--gold);min-width:24px;'>Q"+(i+1)+"</span>"
+      +"<button class='btn br bsm' onclick='removeQuestion("+i+")' style='padding:2px 7px;font-size:9px;margin-left:auto;'>✕ Remove</button>"
+      +"</div>"
+      +"<div class='fg'><label>Question Text (use __________ for blank)</label>"
+      +"<textarea id='qed-q-"+i+"' style='min-height:44px;font-size:12px;'>"+esc(q.q)+"</textarea></div>"
+      +"<div class='egrd'>"
+      +"<div class='fg'><label>Correct Answer(s) — comma-sep if 2 blanks</label>"
+      +"<input type='text' id='qed-ans-"+i+"' value='"+esc(q.ans.join(","))+"' placeholder='e.g. was studying  OR  finished,had bought'></div>"
+      +"<div class='fg'><label>Tense Label (for Results view)</label>"
+      +"<input type='text' id='qed-tense-"+i+"' value='"+esc(q.tense||"")+"' placeholder='Simple Past'></div>"
+      +"</div>"
+      +"<div class='fg'><label>Why — Explanation shown to student after Post-Test</label>"
+      +"<input type='text' id='qed-why-"+i+"' value='"+esc(q.why||"")+"' placeholder='Explanation of the correct answer…'></div>"
+      +"</div>";
+  });
+  h+="</div></div>";
+
+  // ── Question Version History ──
+  h+="<div class='gc'><div class='gh'><h2>🗂️ Question Edit History</h2><p>"+histQS.length+" saved version(s) — click Restore to revert</p></div><div class='gb'>";
+  if(!histQS.length){
+    h+="<p style='color:var(--muted);font-size:12px;'>No question edits saved yet.</p>";
+  } else {
+    h+="<table class='rtbl'><thead><tr><th>Saved At</th><th>Questions</th><th></th></tr></thead><tbody>";
+    histQS.forEach(function(item,idx){
+      h+="<tr><td>"+new Date(item.ts).toLocaleString()+"</td>"
+        +"<td>"+item.data.length+" questions</td>"
+        +"<td><button class='btn bo bsm' onclick='restoreQS("+idx+")'>Restore</button></td></tr>";
+    });
+    h+="</tbody></table>";
+  }
+  h+="</div></div>";
+
+  // ── Data Version History ──
+  h+="<div class='gc'><div class='gh'><h2>📦 Data Version History (Pre/Post)</h2><p>Up to 20 snapshots per test — restore any previous state</p></div><div class='gb'>";
+  var allHist=[].concat(
+    histPre.map(function(item,i){return{ts:item.ts,type:"pre",idx:i,n:item.data.length};}),
+    histPost.map(function(item,i){return{ts:item.ts,type:"post",idx:i,n:item.data.length};})
+  ).sort(function(a,b){return b.ts-a.ts;}).slice(0,20);
+  if(!allHist.length){
+    h+="<p style='color:var(--muted);font-size:12px;'>No history yet. Auto-saved on each change.</p>";
+  } else {
+    h+="<table class='rtbl'><thead><tr><th>Date & Time</th><th>Type</th><th>Records</th><th></th></tr></thead><tbody>";
+    allHist.forEach(function(item){
+      var rBtn='<button class="btn bo bsm" onclick="restoreHistory(\'' + item.type + '\','+item.idx+')">Restore</button>';
+      h+='<tr><td>'+new Date(item.ts).toLocaleString()+'</td>'
+        +'<td>'+item.n+' records</td>'
+        +'<td>'+rBtn+'</td></tr>';
+    });
+    h+="</tbody></table>";
+  }
+  h+="</div></div>";
+  return h;
+}
+function addQuestion(){
+  var qs=getActiveQS().map(function(q){return JSON.parse(JSON.stringify(q));});
+  qs.push({q:"New question __________ (verb).",ans:["answer"],tense:"Tense",why:"Explanation here."});
+  saveCustomQS(qs);
+  render();toast("✅ Question added");
+}
+function removeQuestion(idx){
+  if(!confirm("Remove Q"+(idx+1)+"?"))return;
+  var qs=getActiveQS().map(function(q){return JSON.parse(JSON.stringify(q));});
+  qs.splice(idx,1);
+  saveCustomQS(qs);
+  render();toast("Q"+(idx+1)+" removed");
+}
+function saveQuestions(){
+  var qs=getActiveQS().map(function(q){return JSON.parse(JSON.stringify(q));});
+  var valid=true;
+  qs.forEach(function(q,i){
+    var qEl=document.getElementById("qed-q-"+i);
+    var aEl=document.getElementById("qed-ans-"+i);
+    var tEl=document.getElementById("qed-tense-"+i);
+    var wEl=document.getElementById("qed-why-"+i);
+    if(!qEl||!aEl)return;
+    q.q=qEl.value.trim();
+    var rawAns=(aEl.value||"").split(",").map(function(a){return a.trim();}).filter(Boolean);
+    if(!rawAns.length){valid=false;aEl.style.border="1px solid #ef4444";return;}
+    q.ans=rawAns;
+    if(tEl)q.tense=tEl.value.trim();
+    if(wEl)q.why=wEl.value.trim();
+  });
+  if(!valid){toast("⚠️ All questions need at least one answer",true);return;}
+  saveCustomQS(qs);
+  rescoreAllSubs();
+  render();
+}
+function resetQuestions(){
+  if(!confirm("Reset all questions to default? Custom edits will be lost."))return;
+  sLS("gm_qs",null);
+  rescoreAllSubs();
+  render();toast("✅ Questions reset to default");
+}
+function restoreQS(idx){
+  var hist=gLS("gm_hist_qs")||[];
+  if(!hist[idx])return;
+  if(!confirm("Restore this question version? Current questions will be replaced."))return;
+  sLS("gm_qs",hist[idx].data);
+  rescoreAllSubs();
+  render();toast("✅ Questions restored to "+new Date(hist[idx].ts).toLocaleString());
+}
+
+function saveConfig(){
+  var cfg={
+    type:document.getElementById("cfg-type").value,
+    title:(document.getElementById("cfg-title").value||"Grammar Test").trim(),
+    description:(document.getElementById("cfg-desc").value||"").trim(),
+    mins:parseInt(document.getElementById("cfg-mins").value)||30,
+    showTimeTaken:document.getElementById("cfg-timetaken").checked
+  };
+  saveExamConfig(cfg);
+  toast("✅ Configuration saved");
+  render();
+}
+
+function restoreHistory(type,idx){
+  if(!confirm("Restore this snapshot? Current data will be replaced."))return;
+  var hist=getHistory(type);
+  if(!hist[idx])return;
+  var data=hist[idx].data;
+  if(type==="pre"){sLS("gm_pre",data);}else{sLS("gm_post",data);}
+  toast("✅ Restored to "+new Date(hist[idx].ts).toLocaleString());
+  render();
+}
+
+// ══════════════════════════════════════════════
+// CHARTS
+// ══════════════════════════════════════════════
+function rStudentProgress(preSubs,postSubs){
+  var passThreshold=12; // 12/20 = 60% pass
+  var pairs=[];
+  postSubs.forEach(function(post){
+    var pre=preSubs.find(function(p){return p.sid===post.sid;});
+    if(pre)pairs.push({
+      name:post.name,sid:post.sid,gender:post.gender,faculty:post.faculty,
+      pre:pre.score,post:post.score,gain:post.score-pre.score,
+      prePct:Math.round(pre.score/20*100),
+      postPct:Math.round(post.score/20*100),
+      prePass:pre.score>=passThreshold,
+      postPass:post.score>=passThreshold,
+      improved:post.score>pre.score,
+      declined:post.score<pre.score,
+      stable:post.score===pre.score
+    });
+  });
+  if(!pairs.length)return "";
+  var improved=pairs.filter(function(p){return p.improved;}).length;
+  var declined=pairs.filter(function(p){return p.declined;}).length;
+  var stable=pairs.filter(function(p){return p.stable;}).length;
+  var passedBoth=pairs.filter(function(p){return p.prePass&&p.postPass;}).length;
+  var passedAfter=pairs.filter(function(p){return !p.prePass&&p.postPass;}).length;
+  var failedBoth=pairs.filter(function(p){return !p.prePass&&!p.postPass;}).length;
+  var regressedFail=pairs.filter(function(p){return p.prePass&&!p.postPass;}).length;
+  var h="<div class='gc' style='margin-bottom:13px;border-color:rgba(16,185,129,.3);'>"
+    +"<div class='gh'><h2>📈 Student Progress Analysis</h2>"
+    +"<p>Pass threshold: "+passThreshold+"/20 (60%). Click a row to view full answer sheet comparison.</p></div><div class='gb'>"
+    // Summary boxes
+    +"<div style='display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;'>"
+    +"<div style='background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);border-radius:var(--rs);padding:11px;text-align:center;'>"
+    +"<div style='font-size:22px;font-weight:700;color:#4ade80;'>"+improved+"</div><div style='font-size:9px;color:var(--muted);text-transform:uppercase;'>▲ Improved</div></div>"
+    +"<div style='background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:var(--rs);padding:11px;text-align:center;'>"
+    +"<div style='font-size:22px;font-weight:700;color:#f87171;'>"+declined+"</div><div style='font-size:9px;color:var(--muted);text-transform:uppercase;'>▼ Declined</div></div>"
+    +"<div style='background:rgba(148,163,184,.1);border:1px solid rgba(148,163,184,.2);border-radius:var(--rs);padding:11px;text-align:center;'>"
+    +"<div style='font-size:22px;font-weight:700;color:#94a3b8;'>"+stable+"</div><div style='font-size:9px;color:var(--muted);text-transform:uppercase;'>→ No Change</div></div>"
+    +"<div style='background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);border-radius:var(--rs);padding:11px;text-align:center;'>"
+    +"<div style='font-size:22px;font-weight:700;color:var(--g2);'>"+pairs.length+"</div><div style='font-size:9px;color:var(--muted);text-transform:uppercase;'>Total Paired</div></div>"
+    +"</div>"
+    // Pass/Fail summary
+    +"<div style='display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;'>"
+    +"<div style='background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:var(--rs);padding:10px;text-align:center;'>"
+    +"<div style='font-size:18px;font-weight:700;color:#4ade80;'>"+passedBoth+"</div><div style='font-size:9px;color:var(--muted);'>✅ Passed Both</div></div>"
+    +"<div style='background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:var(--rs);padding:10px;text-align:center;'>"
+    +"<div style='font-size:18px;font-weight:700;color:#a5b4fc;'>"+passedAfter+"</div><div style='font-size:9px;color:var(--muted);'>🚀 Passed After</div></div>"
+    +"<div style='background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:var(--rs);padding:10px;text-align:center;'>"
+    +"<div style='font-size:18px;font-weight:700;color:#f87171;'>"+failedBoth+"</div><div style='font-size:9px;color:var(--muted);'>❌ Failed Both</div></div>"
+    +"<div style='background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:var(--rs);padding:10px;text-align:center;'>"
+    +"<div style='font-size:18px;font-weight:700;color:#fbbf24;'>"+regressedFail+"</div><div style='font-size:9px;color:var(--muted);'>⚠️ Regressed</div></div>"
+    +"</div>"
+    // Per-student table
+    +"<div style='overflow-x:auto;'><table class='rtbl'>"
+    +"<thead><tr><th>#</th><th>Name</th><th>Pre/20</th><th>Post/20</th><th>Gain</th><th>Pre Pass</th><th>Post Pass</th><th>Status</th><th>View</th></tr></thead><tbody>";
+  pairs.forEach(function(p,i){
+    var statusColor=p.improved?"#4ade80":p.declined?"#f87171":"#94a3b8";
+    var statusIcon=p.improved?"▲ Improved":p.declined?"▼ Declined":"→ Stable";
+    var preCol=p.prePass?"#4ade80":"#f87171";
+    var postCol=p.postPass?"#4ade80":"#f87171";
+    h+="<tr>"
+      +"<td style='color:var(--muted);'>"+(i+1)+"</td>"
+      +"<td><strong>"+p.name+"</strong><div style='font-size:9px;color:var(--dim);'>"+p.sid+"</div></td>"
+      +"<td><strong>"+p.pre+"/20</strong><div style='font-size:9px;color:var(--dim);'>"+p.prePct+"%</div></td>"
+      +"<td><strong>"+p.post+"/20</strong><div style='font-size:9px;color:var(--dim);'>"+p.postPct+"%</div></td>"
+      +"<td><span style='color:"+(p.gain>0?"#4ade80":p.gain<0?"#f87171":"#94a3b8")+";font-weight:700;font-size:14px;'>"+(p.gain>0?"+":"")+p.gain+"</span></td>"
+      +"<td><span style='color:"+preCol+";font-weight:700;'>"+(p.prePass?"✅ Pass":"❌ Fail")+"</span></td>"
+      +"<td><span style='color:"+postCol+";font-weight:700;'>"+(p.postPass?"✅ Pass":"❌ Fail")+"</span></td>"
+      +"<td><span style='color:"+statusColor+";font-size:11px;font-weight:600;'>"+statusIcon+"</span></td>"
+      +"<td><button class='btn bo bsm' data-sid=\'"+p.sid+"\' onclick=\'viewStudentComp(this)\'📊</button></td>"
+      +"</tr>";
+  });
+  h+="</tbody></table></div></div></div>";
+  return h;
+}
+
+function viewStudentComparison(sid){
+  var preSubs=getPreSubs(),postSubs=getPostSubs();
+  var pre=preSubs.find(function(s){return s.sid===sid;});
+  var post=postSubs.filter(function(s){return s.sid===sid;});
+  var postLast=post.length?post[post.length-1]:null;
+  if(!pre&&!postLast){toast("No data for this student",true);return;}
+  // Show modal with side-by-side comparison
+  var qs=getActiveQS();
+  var mr=document.getElementById("modal-root");
+  var preScore=pre?pre.score:0;
+  var postScore=postLast?postLast.score:0;
+  var gain=postLast?postScore-preScore:null;
+  var h="<div class='modal-overlay' onclick='closeModal(event)'><div class='modal-box' style='max-width:700px;'>"
+    +"<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;'>"
+    +"<h3 style='font-family:Merriweather,serif;'>"+(pre?pre.name:postLast.name)+" — Before &amp; After</h3>"
+    +"<button class='btn bo bsm' onclick='closeModal()'>✕ Close</button></div>";
+  // Score summary
+  h+="<div style='display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin-bottom:16px;text-align:center;'>"
+    +"<div style='background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:var(--rs);padding:14px;'>"
+    +"<div style='font-size:9px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;'>Pre-Test</div>"
+    +"<div style='font-size:36px;font-weight:900;color:#93c5fd;font-family:Merriweather,serif;'>"+(pre?preScore+"/20":"—")+"</div>"
+    +"</div>"
+    +"<div style='font-size:28px;color:"+(gain>0?"#4ade80":gain<0?"#f87171":"#94a3b8")+";font-weight:700;'>"+(gain!==null?(gain>0?"▲+"+gain:gain<0?"▼"+gain:"→0"):"")+"</div>"
+    +"<div style='background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);border-radius:var(--rs);padding:14px;'>"
+    +"<div style='font-size:9px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;'>Post-Test</div>"
+    +"<div style='font-size:36px;font-weight:900;color:#4ade80;font-family:Merriweather,serif;'>"+(postLast?postScore+"/20":"—")+"</div>"
+    +"</div></div>";
+  // Q-by-Q comparison
+  h+="<div style='max-height:400px;overflow-y:auto;'>"
+    +"<table class='rtbl'><thead><tr><th>Q</th><th>Question</th><th>Pre Answer</th><th>Post Answer</th><th>Correct</th></tr></thead><tbody>";
+  qs.forEach(function(q,i){
+    var preAns=pre&&pre.answers?pre.answers[i]||"—":"—";
+    var postAns=postLast&&postLast.answers?postLast.answers[i]||"—":"—";
+    var preCorrect=pre&&pre.details&&pre.details[i]?pre.details[i].correct:false;
+    var postCorrect=postLast&&postLast.details&&postLast.details[i]?postLast.details[i].correct:false;
+    var correctAns=q.ans.join(" / ");
+    h+="<tr>"
+      +"<td style='font-size:10px;color:var(--gold);font-weight:700;'>Q"+(i+1)+"</td>"
+      +"<td style='font-size:10px;max-width:180px;'>"+q.q.slice(0,60)+"…</td>"
+      +"<td style='font-size:11px;color:"+(preCorrect?"#4ade80":"#f87171")+";'>"+preAns+"</td>"
+      +"<td style='font-size:11px;color:"+(postCorrect?"#4ade80":"#f87171")+";'>"+postAns+"</td>"
+      +"<td style='font-size:10px;color:#a7f3d0;font-family:JetBrains Mono,monospace;'>"+correctAns+"</td>"
+      +"</tr>";
+  });
+  h+="</tbody></table></div></div></div>";
+  mr.innerHTML=h;
+}
+
+function rCheatLog(){
+  var log=JSON.parse(localStorage.getItem("gm_cheat_log")||"[]");
+  if(!log.length)return "";
+  var byStudent={};
+  log.forEach(function(e){
+    if(!byStudent[e.sid])byStudent[e.sid]={name:e.name,sid:e.sid,tabSwitches:0,screenshots:0};
+    if(e.type==="tab_switch")byStudent[e.sid].tabSwitches++;
+    if(e.type==="screenshot")byStudent[e.sid].screenshots++;
+  });
+  var entries=Object.values(byStudent);
+  var h="<div class='gc' style='margin-bottom:13px;border-color:rgba(239,68,68,.3);'>"
+    +"<div class='gh' style='justify-content:space-between;'>"
+    +"<div><h2>⚠️ Integrity Log</h2><p>Suspicious activity detected during exams</p></div>"
+    +"<button class='btn br bsm' onclick='clearCheatLog()'>🗑️ Clear</button>"
+    +"</div><div class='gb' style='overflow-x:auto;'>"
+    +"<table class='rtbl'><thead><tr><th>Name</th><th>ID</th><th>Tab Switches</th><th>Screenshot Attempts</th><th>Risk</th></tr></thead><tbody>";
+  entries.forEach(function(e){
+    var risk=e.tabSwitches>3||e.screenshots>0?"🔴 High":e.tabSwitches>1?"🟡 Medium":"🟢 Low";
+    h+="<tr><td><strong>"+e.name+"</strong></td><td style='font-family:JetBrains Mono,monospace;font-size:10px;'>"+e.sid+"</td>"
+      +"<td>"+e.tabSwitches+"</td><td>"+e.screenshots+"</td>"
+      +"<td>"+risk+"</td></tr>";
+  });
+  h+="</tbody></table></div></div>";
+  return h;
+}
+function clearCheatLog(){
+  if(!confirm("Clear all integrity logs?"))return;
+  localStorage.removeItem("gm_cheat_log");
+  render();toast("✅ Log cleared");
+}
+
+function rGradeOverride(postSubs){
+  if(!postSubs.length)return "";
+  var h="<div class='gc' style='margin-bottom:13px;border-color:rgba(245,158,11,.25);'>"
+    +"<div class='gh'><h2>✏️ Manual Grade Override</h2>"
+    +"<p>Override any student's post-test score. Enter a comment for feedback.</p></div><div class='gb'>"
+    +"<div style='overflow-x:auto;'><table class='rtbl'>"
+    +"<thead><tr><th>Name</th><th>ID</th><th>Auto Score</th><th>Override /20</th><th>Examiner Comment</th><th></th></tr></thead><tbody>";
+  postSubs.forEach(function(sub,i){
+    var ov=JSON.parse(localStorage.getItem("gm_override_"+sub.id)||"null");
+    var ovScore=ov?ov.score:sub.score;
+    var ovComment=ov?ov.comment:"";
+    h+="<tr>"
+      +"<td><strong>"+sub.name+"</strong></td>"
+      +"<td style='font-size:10px;font-family:JetBrains Mono,monospace;'>"+sub.sid+"</td>"
+      +"<td style='color:var(--muted);'>"+sub.score+"/20</td>"
+      +"<td><input type='number' id='ov-score-"+i+"' value='"+ovScore+"' min='0' max='20' style='width:55px;padding:4px 7px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:5px;color:var(--text);font-size:12px;'></td>"
+      +"<td><input type='text' id='ov-comment-"+i+"' value='"+esc(ovComment)+"' placeholder='Feedback comment…' style='min-width:160px;padding:4px 8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:5px;color:var(--text);font-size:11px;'></td>"
+      +"<td><button class='btn bgg bsm' onclick='saveOverride("+i+")'>💾</button></td>"
+      +"</tr>";
+  });
+  h+="</tbody></table></div></div></div>";
+  return h;
+}
+function saveOverride(idx){
+  var posts=getPostSubs();
+  var sub=posts[idx];
+  if(!sub)return;
+  var scoreEl=document.getElementById("ov-score-"+idx);
+  var cmtEl=document.getElementById("ov-comment-"+idx);
+  var score=parseInt(scoreEl?scoreEl.value:sub.score)||sub.score;
+  var comment=(cmtEl?cmtEl.value:"").trim();
+  localStorage.setItem("gm_override_"+sub.id,JSON.stringify({score:score,comment:comment,at:new Date().toISOString()}));
+  toast("✅ Override saved for "+sub.name);
+}
+function getOverride(subId){
+  return JSON.parse(localStorage.getItem("gm_override_"+subId)||"null");
+}
+
+function drawCharts(){
+  var preSubs=getPreSubs();
+  var postSubs=getPostSubs();
+  var pairs=[];
+  postSubs.forEach(function(post){
+    var pre=preSubs.find(function(p){return p.sid===post.sid;});
+    if(pre)pairs.push({name:post.name.split(" ")[0],pre:pre.score,post:post.score,gain:post.score-pre.score});
+  });
+  var gc="rgba(255,255,255,.06)",tc="#64748b";
+  function mk(id,type,data,opts){var el=document.getElementById(id);if(!el)return;if(el._ch){el._ch.destroy();}el._ch=new Chart(el,{type:type,data:data,options:opts||{}});}
+  var baseOpts={plugins:{legend:{labels:{color:"#94a3b8",font:{size:9}}}},scales:{y:{ticks:{color:tc,stepSize:4},grid:{color:gc},beginAtZero:true,max:20},x:{ticks:{color:tc,font:{size:9}},grid:{display:false}}}};
+  if(pairs.length){
+    mk("ch-pp","bar",{labels:pairs.map(function(p){return p.name;}),datasets:[{label:"Pre",data:pairs.map(function(p){return p.pre;}),backgroundColor:"rgba(59,130,246,.65)",borderRadius:4},{label:"Post",data:pairs.map(function(p){return p.post;}),backgroundColor:"rgba(16,185,129,.75)",borderRadius:4}]},baseOpts);
+    mk("ch-gain","bar",{labels:pairs.map(function(p){return p.name;}),datasets:[{label:"Gain",data:pairs.map(function(p){return p.gain;}),backgroundColor:pairs.map(function(p){return p.gain>0?"rgba(16,185,129,.75)":p.gain<0?"rgba(239,68,68,.65)":"rgba(148,163,184,.5)";}),borderRadius:4}]},{plugins:{legend:{display:false}},scales:{y:{ticks:{color:tc},grid:{color:gc}},x:{ticks:{color:tc,font:{size:9}},grid:{display:false}}}});
+  }
+  // Gender chart
+  var males=preSubs.filter(function(s){return s.gender==="M";}).length;
+  var females=preSubs.filter(function(s){return s.gender==="F";}).length;
+  mk("ch-gender","doughnut",{labels:["Male","Female"],datasets:[{data:[males,females],backgroundColor:["rgba(59,130,246,.7)","rgba(236,72,153,.7)"],borderWidth:1}]},{plugins:{legend:{labels:{color:"#94a3b8",font:{size:11}}}}});
+  // Faculty chart
+  var byFac={};
+  preSubs.forEach(function(s){var f=(s.faculty||"Other").replace("Faculty of ","");if(!byFac[f])byFac[f]=0;byFac[f]++;});
+  var facKeys=Object.keys(byFac);
+  var colors=["rgba(245,158,11,.7)","rgba(59,130,246,.7)","rgba(16,185,129,.7)","rgba(139,92,246,.7)","rgba(236,72,153,.7)","rgba(20,184,166,.7)","rgba(251,146,60,.7)","rgba(99,102,241,.7)","rgba(244,63,94,.7)","rgba(34,197,94,.7)","rgba(168,85,247,.7)"];
+  mk("ch-fac","bar",{labels:facKeys,datasets:[{data:facKeys.map(function(k){return byFac[k];}),backgroundColor:colors.slice(0,facKeys.length),borderRadius:4}]},{plugins:{legend:{display:false}},scales:{y:{ticks:{color:tc,stepSize:1},grid:{color:gc},beginAtZero:true},x:{ticks:{color:tc,font:{size:8}},grid:{display:false}}}});
+}
+
+// ══════════════════════════════════════════════
+// STATISTICS (T-Test)
+// ══════════════════════════════════════════════
+function pairedTTest(pre,post){
+  var n=pre.length;
+  if(n<2)return{t:0,p:1,df:0};
+  var diffs=pre.map(function(p,i){return post[i]-p;});
+  var meanD=diffs.reduce(function(a,b){return a+b;},0)/n;
+  var varD=diffs.reduce(function(a,b){return a+Math.pow(b-meanD,2);},0)/(n-1);
+  var se=Math.sqrt(varD/n);
+  var t=se===0?0:meanD/se;
+  var df=n-1;
+  var p=approxPVal(Math.abs(t),df)*2;
+  return{t:t,p:Math.min(p,1),df:df};
+}
+function approxPVal(t,df){
+  if(df<=0)return 0.5;
+  var x=df/(df+t*t);
+  var a=df/2,b=0.5;
+  return regIncBeta(x,a,b)/2;
+}
+function regIncBeta(x,a,b){
+  if(x<=0)return 0;if(x>=1)return 1;
+  var lbeta=lgamma(a)+lgamma(b)-lgamma(a+b);
+  var front=Math.exp(Math.log(x)*a+Math.log(1-x)*b-lbeta)/a;
+  var eps=1e-8,maxit=200,qab=a+b,qap=a+1,qam=a-1;
+  var c=1,d=1-(qab*x/qap);
+  if(Math.abs(d)<1e-30)d=1e-30;
+  d=1/d;var h=d;
+  for(var m=1;m<=maxit;m++){
+    var m2=2*m,aa=m*(b-m)*x/((qam+m2)*(a+m2));
+    d=1+aa*d;if(Math.abs(d)<1e-30)d=1e-30;
+    c=1+aa/c;if(Math.abs(c)<1e-30)c=1e-30;
+    d=1/d;h*=d*c;
+    aa=-(a+m)*(qab+m)*x/((a+m2)*(qap+m2));
+    d=1+aa*d;if(Math.abs(d)<1e-30)d=1e-30;
+    c=1+aa/c;if(Math.abs(c)<1e-30)c=1e-30;
+    d=1/d;var del=d*c;h*=del;
+    if(Math.abs(del-1)<eps)break;
+  }
+  return front*h;
+}
+function lgamma(z){
+  var c=[0.99999999999980993,676.5203681218851,-1259.1392167224028,771.32342877765313,-176.61502916214059,12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];
+  if(z<0.5)return Math.log(Math.PI/Math.sin(Math.PI*z))-lgamma(1-z);
+  z-=1;var x=c[0];
+  for(var i=1;i<9;i++)x+=c[i]/(z+i);
+  var t=z+7.5;
+  return 0.5*Math.log(2*Math.PI)+(z+0.5)*Math.log(t)-t+Math.log(x);
+}
+
+// ══════════════════════════════════════════════
+// EXPORT
+// ══════════════════════════════════════════════
+function expExcel(){
+  if(typeof XLSX==="undefined"){toast("Loading…",true);return;}
+  var preSubs=getPreSubs(),postSubs=getPostSubs();
+  var wb=XLSX.utils.book_new();
+  var ph=[["Name","ID","Gender","Faculty","Score/20","%","Grade","Date"]];
+  preSubs.forEach(function(s){var p=Math.round(s.score/20*100);ph.push([s.name,s.sid,s.gender,s.faculty,s.score,p+"%",p>=90?"A":p>=80?"B+":p>=75?"B":p>=65?"C+":p>=55?"C":p>=50?"D":"F",s.at.slice(0,10)]);});
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(ph),"Pre-Test");
+  var po=[["Name","ID","Gender","Faculty","Score/20","%","Grade","Date"]];
+  postSubs.forEach(function(s){var p=Math.round(s.score/20*100);po.push([s.name,s.sid,s.gender,s.faculty,s.score,p+"%",p>=90?"A":p>=80?"B+":p>=75?"B":p>=65?"C+":p>=55?"C":p>=50?"D":"F",s.at.slice(0,10)]);});
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(po),"Post-Test");
+  var pairs=[];
+  postSubs.forEach(function(post){var pre=preSubs.find(function(p){return p.sid===post.sid;});if(pre)pairs.push([post.name,post.sid,post.gender,post.faculty,pre.score,post.score,post.score-pre.score,Math.round(((post.score-pre.score)/Math.max(pre.score,1))*100)+"%"]);});
+  if(pairs.length)XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([["Name","ID","Gender","Faculty","Pre/20","Post/20","Gain","% Change"]].concat(pairs)),"Comparison");
+  XLSX.writeFile(wb,"MSA_Grammar_"+new Date().toISOString().slice(0,10)+".xlsx");
+  toast("📊 Excel exported!");
+}
+
+function expPDF(){
+  var preSubs=getPreSubs(),postSubs=getPostSubs();
+  var pairs=[];
+  postSubs.forEach(function(post){var pre=preSubs.find(function(p){return p.sid===post.sid;});if(pre)pairs.push({name:post.name,sid:post.sid,pre:pre.score,post:post.score,gain:post.score-pre.score});});
+  var n=pairs.length;
+  var preMean=n?pairs.reduce(function(a,p){return a+p.pre;},0)/n:0;
+  var postMean=n?pairs.reduce(function(a,p){return a+p.post;},0)/n:0;
+  var gainMean=n?pairs.reduce(function(a,p){return a+p.gain;},0)/n:0;
+  var ttest=n>=2?pairedTTest(pairs.map(function(p){return p.pre;}),pairs.map(function(p){return p.post;})):{t:0,p:1,df:0};
+  var w=window.open("","_blank","width=900,height=700");
+  if(!w){toast("Allow popups",true);return;}
+  var rows=pairs.map(function(p,i){var c=p.gain>0?"#059669":p.gain<0?"#dc2626":"#666";return"<tr><td>"+(i+1)+"</td><td>"+p.name+"</td><td>"+p.sid+"</td><td>"+p.pre+"</td><td><b>"+p.post+"</b></td><td style='color:"+c+";font-weight:700;'>"+(p.gain>0?"+":"")+p.gain+"</td></tr>";}).join("");
+  w.document.write("<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Grammar Results</title><style>body{font-family:Georgia,serif;margin:24px;color:#111;}h1{color:#1e3a5f;border-bottom:3px solid #d97706;padding-bottom:8px;}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0;}.st{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;text-align:center;}.sn{font-size:20px;font-weight:700;color:#d97706;}.sl{font-size:10px;color:#64748b;}table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px;}th{background:#1e3a5f;color:#fff;padding:7px 8px;text-align:left;}td{padding:6px 8px;border-bottom:1px solid #e2e8f0;}.sig{background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:12px;margin:12px 0;}.notsig{background:#fef2f2;border:1px solid #fca5a5;border-radius:6px;padding:12px;margin:12px 0;}@media print{.noprint{display:none;}}</style></head><body>");
+  w.document.write("<h1>Grammar Assessment — Pre/Post Results Report</h1><p style='font-size:12px;background:#f8fafc;padding:10px;border-radius:6px;'>MSA University · Spring 2026 · "+new Date().toLocaleDateString()+"</p>");
+  w.document.write("<h2>Descriptive Statistics</h2><div class='stats'><div class='st'><div class='sn'>"+preMean.toFixed(2)+"</div><div class='sl'>Pre Mean /20</div></div><div class='st'><div class='sn'>"+postMean.toFixed(2)+"</div><div class='sl'>Post Mean /20</div></div><div class='st'><div class='sn' style='color:"+(gainMean>=0?"#059669":"#dc2626")+";'>"+(gainMean>=0?"+":"")+gainMean.toFixed(2)+"</div><div class='sl'>Mean Gain</div></div><div class='st'><div class='sn'>"+n+"</div><div class='sl'>Matched Pairs</div></div></div>");
+  w.document.write("<h2>Inferential Statistics — Paired T-Test</h2><div class='"+(ttest.p<0.05?"sig":"notsig")+"'><strong>"+(ttest.p<0.05?"✅ Statistically Significant (p < 0.05)":"❌ Not Statistically Significant (p ≥ 0.05)")+"</strong><br>t("+ttest.df+") = "+ttest.t.toFixed(4)+", p = "+ttest.p.toFixed(4)+"</div>");
+  w.document.write("<h2>Individual Results</h2><table><thead><tr><th>#</th><th>Name</th><th>ID</th><th>Pre/20</th><th>Post/20</th><th>Gain</th></tr></thead><tbody>"+rows+"</tbody></table>");
+  w.document.write("<br><button class='noprint' onclick='window.print()' style='padding:10px 20px;background:#1e3a5f;color:#fff;border:none;border-radius:6px;cursor:pointer;'>🖨️ Print</button></body></html>");
+  w.document.close();setTimeout(function(){w.print();},600);
+  toast("📄 PDF ready");
+}
+
+function clearSubs(type){
+  if(!confirm("Delete all "+type+"-test submissions?"))return;
+  if(type==="post")savePostSubs([]);
+  render();toast("✅ Cleared");
+}
+
+// ══════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════
+function toast(msg,isErr){
+  var t=document.createElement("div");
+  t.className="toast"+(isErr?" err":"");
+  t.textContent=msg;document.body.appendChild(t);
+  setTimeout(function(){t.remove();},3500);
+}
+
+
+function restoreHistBtn(el){restoreHistory(el.getAttribute('data-rtype'),parseInt(el.getAttribute('data-ridx')));}
+
+function viewStudentComp(el){viewStudentComparison(el.getAttribute('data-sid'));}
+function restoreHistEl(el){restoreHistory(el.getAttribute('data-rtype'),parseInt(el.getAttribute('data-ridx')));}
+
+document.addEventListener("DOMContentLoaded",function(){
+  // Seed pre-test data
+  var pre=gLS("gm_pre");
+  if(!pre||!pre.length){sLS("gm_pre",SEED_PRE);}
+  // Always start at landing page
+  S.role=null;
+  render();
+});
+</script>
+</body>
+</html>
